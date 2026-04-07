@@ -1,123 +1,178 @@
-import React, { useState } from 'react';
+// Import React and hooks (useState = state, useEffect = lifecycle)
+import React, { useState, useEffect } from 'react';
+
+// Import UI components from React Native
 import { View, Text, StyleSheet, Alert, Image } from 'react-native';
+
+// Import Tinder-style swiper library
 import Swiper from 'react-native-deck-swiper';
 
+// Import axios for API requests
+import axios from 'axios';
 
-// Dummy users
-const receivedLikes = [
-  { id: 3, name: 'Ana' } // pretend Ana already liked you
-];
+// Simulated logged-in user (later from login system)
 const currentUser = {
-  id: 99,
-  role: 'Senior' // try: 'Senior', 'Caregiver', 'Volunteer'
+  id: 1,
+  role: 'Senior'
 };
-const initialUsers = [
-  {
-    id: 1,
-    name: 'Lola Maria',
-    age: 70,
-    role: 'Senior',
-    location: 'Pampanga',
-    bio: 'Looking for a companion to talk with daily.',
-    image: 'https://i.pravatar.cc/300?img=5'
-  },
-  {
-    id: 2,
-    name: 'Mang Juan',
-    age: 65,
-    role: 'Senior',
-    location: 'Angeles City',
-    bio: 'Needs help with medical checkups.',
-    image: 'https://i.pravatar.cc/300?img=12'
-  },
-  {
-    id: 3,
-    name: 'Ana',
-    age: 28,
-    role: 'Caregiver',
-    location: 'San Fernando',
-    bio: 'Experienced caregiver with 5 years experience.',
-    image: 'https://i.pravatar.cc/300?img=20'
-  }
-];
 
 export default function SwipeScreen() {
-  const getFilteredUsers = () => {
-    if (currentUser.role === 'Senior') {
-        return initialUsers.filter(
-        user => user.role === 'Caregiver' || user.role === 'Volunteer'
-        );
-    }
 
-    if (currentUser.role === 'Caregiver' || currentUser.role === 'Volunteer') {
-        return initialUsers.filter(user => user.role === 'Senior');
-    }
+  // State to store users from database
+  const [users, setUsers] = useState([]);
 
-    return initialUsers;
-    };
-
-    const [users, setUsers] = useState(getFilteredUsers());
-  const [likes, setLikes] = useState([]); // store liked users
+  // State to store matches
   const [matches, setMatches] = useState([]);
 
+  // Runs once when screen loads
+  useEffect(() => {
+
+    console.log("Fetching users from API...");
+
+    // API call to get users from PHP
+    axios.get('http://192.168.0.216/eldercare-api/get_users.php')
+      .then(res => {
+
+        console.log("API DATA:", res.data); // Debug log
+
+        // If no data returned, stop
+        if (!res.data || res.data.length === 0) {
+          console.log("No users found in database");
+          return;
+        }
+
+        // Filter users based on role
+        const filtered = res.data.filter(user => {
+
+          // If current user is Senior → show Caregiver/Volunteer
+          if (currentUser.role === 'Senior') {
+            return user.role === 'Caregiver' || user.role === 'Volunteer';
+          }
+
+          // If Caregiver/Volunteer → show Seniors
+          return user.role === 'Senior';
+        });
+
+        console.log("Filtered Users:", filtered); // Debug log
+
+        // Save filtered users into state
+        setUsers(filtered);
+      })
+      .catch(err => {
+        console.log("API ERROR:", err);
+      });
+
+  }, []); // empty = run once only
+
+  // Function when user swipes RIGHT (LIKE)
   const handleSwipeRight = (index) => {
-    const likedUser = users[index];
 
-    console.log('Liked:', likedUser);
+    const user = users[index]; // get swiped user
 
-    // Save like
-    setLikes((prev) => [...prev, likedUser]);
-
-    // Check if that user already liked YOU
-    const isMatch = receivedLikes.find(u => u.id === likedUser.id);
-
-    if (isMatch) {
-        setMatches((prev) => [...prev, likedUser]);
-
-        Alert.alert(
-        "🎉 It's a Match!",
-        `You and ${likedUser.name} liked each other!`
-        );
+    if (!user) {
+      console.log("No user found at index:", index);
+      return;
     }
-    };
 
+    console.log("RIGHT SWIPE:", user);
+
+    // Send swipe to backend
+    axios.post('http://192.168.0.216/eldercare-api/swipe.php', {
+      swiper_id: currentUser.id,
+      swiped_id: user.id,
+      action: 'like'
+    })
+    .then(res => {
+
+      console.log("Swipe response:", res.data);
+
+      // If match found
+      if (res.data.match) {
+        setMatches(prev => [...prev, user]); // add to matches
+
+        Alert.alert("🎉 Match!", `You matched with ${user.name}`);
+      }
+    })
+    .catch(err => console.log("SWIPE ERROR:", err));
+  };
+
+  // Function when user swipes LEFT (PASS)
   const handleSwipeLeft = (index) => {
-    console.log('Passed:', users[index]);
+
+    const user = users[index];
+
+    if (!user) {
+      console.log("No user found on left swipe");
+      return;
+    }
+
+    console.log("LEFT SWIPE:", user);
   };
 
   return (
     <View style={styles.container}>
-        <Text style={{ textAlign: 'center', marginTop: 40 }}>
-            Logged in as: {currentUser.role}
-        </Text>
-        <Text style={{ textAlign: 'center', marginBottom: 10 }}>
-        Matches: {matches.length}
-        </Text>
-      <Swiper
-        cards={users}
-        renderCard={(card) => {
-            if (!card) return <View />;
 
-            return (
+      {/* Show current role */}
+      <Text style={{ textAlign: 'center', marginTop: 40 }}>
+        Logged in as: {currentUser.role}
+      </Text>
+
+      {/* Show number of matches */}
+      <Text style={{ textAlign: 'center', marginBottom: 10 }}>
+        Matches: {matches.length}
+      </Text>
+
+      {/* Swiper component */}
+      <Swiper
+        key={users.length} // 🔥 force re-render when users change
+        cards={users} // data source
+
+        // Render each card
+        renderCard={(card) => {
+
+          if (!card) return <View />; // prevent crash
+
+          return (
             <View style={styles.card}>
-                <Image source={{ uri: card.image }} style={styles.image} />
-                <View style={styles.info}>
-                <Text style={styles.name}>{card.name}, {card.age}</Text>
-                <Text>{card.role}</Text>
-                </View>
+
+              {/* Profile Image */}
+              <Image
+                source={{
+                  uri: card.image || 'https://via.placeholder.com/300' // fallback image
+                }}
+                style={styles.image}
+              />
+
+              {/* User Info */}
+              <View style={styles.info}>
+                <Text style={styles.name}>
+                  {card.name || "No Name"}, {card.age || "N/A"}
+                </Text>
+
+                <Text>{card.role || "No Role"}</Text>
+                <Text>{card.location || "No Location"}</Text>
+              </View>
+
             </View>
-            );
+          );
         }}
-        onSwipedRight={handleSwipeRight}
-        onSwipedLeft={handleSwipeLeft}
-        stackSize={3}
-        />
+
+        onSwipedRight={handleSwipeRight} // swipe right handler
+        onSwipedLeft={handleSwipeLeft}   // swipe left handler
+        stackSize={3} // number of stacked cards
+      />
+
     </View>
   );
 }
 
+// Styles
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f2f2f2' },
+
+  container: {
+    flex: 1,
+    backgroundColor: '#f2f2f2'
+  },
 
   card: {
     flex: 1,
@@ -139,21 +194,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 22,
     fontWeight: 'bold'
-  },
-
-  role: {
-    color: '#FF4081',
-    fontWeight: 'bold',
-    marginTop: 5
-  },
-
-  location: {
-    marginTop: 5,
-    color: 'gray'
-  },
-
-  bio: {
-    marginTop: 10,
-    fontSize: 14
   }
+
 });
