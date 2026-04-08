@@ -1,165 +1,156 @@
-// Import React and hooks (useState = state, useEffect = lifecycle)
+// Import React and hooks
 import React, { useState, useEffect } from 'react';
 
-// Import UI components from React Native
+// Import UI components
 import { View, Text, StyleSheet, Alert, Image } from 'react-native';
 
-// Import Tinder-style swiper library
+// Import swiper
 import Swiper from 'react-native-deck-swiper';
 
-// Import axios for API requests
+// Import axios
 import axios from 'axios';
 
-// Simulated logged-in user (later from login system)
-const currentUser = {
-  id: 1,
-  role: 'Senior'
-};
+// ✅ RECEIVE USER FROM LOGIN (VERY IMPORTANT)
+export default function SwipeScreen({ route }) {
 
-export default function SwipeScreen() {
+  const { user } = route.params; // get logged-in user
+  const currentUser = user; // use as current user
 
-  // State to store users from database
+  // Store users from database
   const [users, setUsers] = useState([]);
 
-  // State to store matches
+  // Store matches
   const [matches, setMatches] = useState([]);
 
-  // Runs once when screen loads
+  // Run when screen loads
   useEffect(() => {
 
     console.log("Fetching users from API...");
 
-    // API call to get users from PHP
     axios.get('http://192.168.0.216/eldercare-api/get_users.php')
       .then(res => {
 
-        console.log("API DATA:", res.data); // Debug log
+        console.log("API DATA:", res.data);
 
-        // If no data returned, stop
         if (!res.data || res.data.length === 0) {
-          console.log("No users found in database");
+          console.log("No users found");
           return;
         }
 
-        // Filter users based on role
-        const filtered = res.data.filter(user => {
+        // ✅ FILTER BASED ON REAL USER ROLE
+        const filtered = res.data.filter(u => {
 
-          // If current user is Senior → show Caregiver/Volunteer
+          // Do not include yourself
+          if (u.id == currentUser.id) return false;
+
+          // Senior sees caregivers/volunteers
           if (currentUser.role === 'Senior') {
-            return user.role === 'Caregiver' || user.role === 'Volunteer';
+            return u.role === 'Caregiver' || u.role === 'Volunteer';
           }
 
-          // If Caregiver/Volunteer → show Seniors
-          return user.role === 'Senior';
+          // Caregiver/Volunteer sees seniors
+          return u.role === 'Senior';
         });
 
-        console.log("Filtered Users:", filtered); // Debug log
+        console.log("Filtered Users:", filtered);
 
-        // Save filtered users into state
         setUsers(filtered);
       })
-      .catch(err => {
-        console.log("API ERROR:", err);
-      });
+      .catch(err => console.log("API ERROR:", err));
 
-  }, []); // empty = run once only
+  }, []);
 
-  // Function when user swipes RIGHT (LIKE)
+  // Swipe RIGHT (LIKE)
   const handleSwipeRight = (index) => {
 
-    const user = users[index]; // get swiped user
+    const selectedUser = users[index];
 
-    if (!user) {
+    if (!selectedUser) {
       console.log("No user found at index:", index);
       return;
     }
 
-    console.log("RIGHT SWIPE:", user);
+    console.log("RIGHT SWIPE:", selectedUser);
 
-    // Send swipe to backend
     axios.post('http://192.168.0.216/eldercare-api/swipe.php', {
-      swiper_id: currentUser.id,
-      swiped_id: user.id,
+      swiper_id: currentUser.id, // ✅ real user
+      swiped_id: selectedUser.id,
       action: 'like'
     })
     .then(res => {
 
       console.log("Swipe response:", res.data);
 
-      // If match found
       if (res.data.match) {
-        setMatches(prev => [...prev, user]); // add to matches
+        setMatches(prev => [...prev, selectedUser]);
 
-        Alert.alert("🎉 Match!", `You matched with ${user.name}`);
+        Alert.alert("🎉 Match!", `You matched with ${selectedUser.name}`);
       }
     })
     .catch(err => console.log("SWIPE ERROR:", err));
   };
 
-  // Function when user swipes LEFT (PASS)
+  // Swipe LEFT (PASS)
   const handleSwipeLeft = (index) => {
 
-    const user = users[index];
+    const selectedUser = users[index];
 
-    if (!user) {
+    if (!selectedUser) {
       console.log("No user found on left swipe");
       return;
     }
 
-    console.log("LEFT SWIPE:", user);
+    console.log("LEFT SWIPE:", selectedUser);
   };
 
   return (
     <View style={styles.container}>
 
-      {/* Show current role */}
+      {/* Show logged in user */}
       <Text style={{ textAlign: 'center', marginTop: 40 }}>
-        Logged in as: {currentUser.role}
+        Logged in as: {currentUser.name} ({currentUser.role})
       </Text>
 
-      {/* Show number of matches */}
+      {/* Show match count */}
       <Text style={{ textAlign: 'center', marginBottom: 10 }}>
         Matches: {matches.length}
       </Text>
 
-      {/* Swiper component */}
+      {/* Swiper */}
       <Swiper
-        key={users.length} // 🔥 force re-render when users change
-        cards={users} // data source
+        key={users.length}
+        cards={users}
 
-        // Render each card
         renderCard={(card) => {
 
-          if (!card) return <View />; // prevent crash
+          if (!card) return <View />;
 
           return (
             <View style={styles.card}>
 
-              {/* Profile Image */}
               <Image
                 source={{
-                  uri: card.image || 'https://via.placeholder.com/300' // fallback image
+                  uri: card.image || 'https://via.placeholder.com/300'
                 }}
                 style={styles.image}
               />
 
-              {/* User Info */}
               <View style={styles.info}>
                 <Text style={styles.name}>
-                  {card.name || "No Name"}, {card.age || "N/A"}
+                  {card.name}, {card.age || "N/A"}
                 </Text>
 
-                <Text>{card.role || "No Role"}</Text>
-                <Text>{card.location || "No Location"}</Text>
+                <Text>{card.role}</Text>
+                <Text>{card.location}</Text>
               </View>
 
             </View>
           );
         }}
 
-        onSwipedRight={handleSwipeRight} // swipe right handler
-        onSwipedLeft={handleSwipeLeft}   // swipe left handler
-        stackSize={3} // number of stacked cards
+        onSwipedRight={handleSwipeRight}
+        onSwipedLeft={handleSwipeLeft}
+        stackSize={3}
       />
 
     </View>

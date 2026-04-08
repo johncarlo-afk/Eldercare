@@ -1,17 +1,25 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, route }) {
+
+  // Receive logged-in user
+  const { user } = route.params;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome 👋</Text>
 
+      {/* Show user name */}
+      <Text style={styles.title}>Welcome {user.name} 👋</Text>
+
+      {/* Navigate to swipe with user */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Swipe')}
+        onPress={() => navigation.navigate('Swipe', { user })}
       >
         <Text style={styles.buttonText}>Find Matches</Text>
       </TouchableOpacity>
+
     </View>
   );
 }
