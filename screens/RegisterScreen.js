@@ -34,64 +34,63 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
 
-      {/* Name input */}
-      <TextInput
-        placeholder="Full Name"
-        style={styles.input}
-        onChangeText={setName}
-      />
+      <View style={styles.card}>
+        <Text style={styles.title}>Create Account</Text>
 
-      {/* Email input */}
-      <TextInput
-        placeholder="Email"
-        style={styles.input}
-        onChangeText={setEmail}
-      />
+        <TextInput placeholder="Full Name" style={styles.input} onChangeText={setName} />
+        <TextInput placeholder="Email" style={styles.input} onChangeText={setEmail} />
+        <TextInput placeholder="Password" secureTextEntry style={styles.input} onChangeText={setPassword} />
+        <TextInput placeholder="Role (Senior / Caregiver / Volunteer)" style={styles.input} onChangeText={setRole} />
 
-      {/* Password input */}
-      <TextInput
-        placeholder="Password"
-        secureTextEntry
-        style={styles.input}
-        onChangeText={setPassword}
-      />
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* Role input */}
-      <TextInput
-        placeholder="Role (Senior / Caregiver / Volunteer)"
-        style={styles.input}
-        onChangeText={setRole}
-      />
-
-      {/* Register button */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleRegister}
-      >
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
-  title: { fontSize: 26, marginBottom: 20, textAlign: 'center' },
-  input: {
-    borderWidth: 1,
-    padding: 12,
-    marginBottom: 15,
-    borderRadius: 8
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7FA',
+    justifyContent: 'center',
+    padding: 20
   },
+
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 25,
+    elevation: 5
+  },
+
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center'
+  },
+
+  input: {
+    backgroundColor: '#F0F0F0',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 12
+  },
+
   button: {
     backgroundColor: '#2196F3',
     padding: 15,
-    borderRadius: 8
+    borderRadius: 12,
+    marginTop: 5
   },
+
   buttonText: {
     color: '#fff',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontWeight: 'bold'
   }
 });

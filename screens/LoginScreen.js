@@ -39,38 +39,36 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Elder Care Matters</Text>
 
-      <TextInput
-        placeholder="Email"
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-      />
+      <View style={styles.card}>
+        <Text style={styles.title}>Elder Care Matters</Text>
 
-      <TextInput
-        placeholder="Password"
-        secureTextEntry
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-      />
+        <TextInput
+          placeholder="Email"
+          placeholderTextColor="#999"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+        />
 
-      {/* Login button */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleLogin}
-      >
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+        <TextInput
+          placeholder="Password"
+          placeholderTextColor="#999"
+          secureTextEntry
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+        />
 
-      {/* Go to register */}
-      <Text
-        style={styles.link}
-        onPress={() => navigation.navigate('Register')}
-      >
-        Create Account
-      </Text>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
+          Create Account
+        </Text>
+      </View>
+
     </View>
   );
 }
@@ -78,36 +76,49 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F5F7FA',
     justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#f5f5f5'
+    padding: 20
   },
+
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 25,
+    elevation: 5
+  },
+
   title: {
-    fontSize: 28,
+    fontSize: 26,
+    fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 30,
-    fontWeight: 'bold'
+    marginBottom: 25,
+    color: '#333'
   },
+
   input: {
-    borderWidth: 1,
-    padding: 12,
-    marginBottom: 15,
-    borderRadius: 8,
-    backgroundColor: '#fff'
-  },
-  button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#F0F0F0',
     padding: 15,
-    borderRadius: 8
+    borderRadius: 12,
+    marginBottom: 15
   },
+
+  button: {
+    backgroundColor: '#2196F3',
+    padding: 15,
+    borderRadius: 12,
+    marginTop: 5
+  },
+
   buttonText: {
-    textAlign: 'center',
     color: '#fff',
+    textAlign: 'center',
     fontWeight: 'bold'
   },
+
   link: {
     marginTop: 15,
     textAlign: 'center',
-    color: 'blue'
+    color: '#333'
   }
 });

@@ -122,26 +122,35 @@ export default function SwipeScreen({ route }) {
         cards={users}
 
         renderCard={(card) => {
-
           if (!card) return <View />;
 
           return (
             <View style={styles.card}>
 
+              {/* FULL IMAGE */}
               <Image
-                source={{
-                  uri: card.image || 'https://via.placeholder.com/300'
-                }}
+                source={{ uri: card.image }}
                 style={styles.image}
               />
 
-              <View style={styles.info}>
+              {/* DARK OVERLAY (for readability) */}
+              <View style={styles.gradient} />
+
+              {/* USER INFO */}
+              <View style={styles.infoContainer}>
+
                 <Text style={styles.name}>
                   {card.name}, {card.age || "N/A"}
                 </Text>
 
-                <Text>{card.role}</Text>
-                <Text>{card.location}</Text>
+                <Text style={styles.role}>
+                  {card.role}
+                </Text>
+
+                <Text style={styles.location}>
+                  📍 {card.location}
+                </Text>
+
               </View>
 
             </View>
@@ -162,29 +171,55 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: '#f2f2f2'
+    backgroundColor: '#F5F7FA'
   },
 
   card: {
     flex: 1,
-    borderRadius: 20,
-    backgroundColor: '#fff',
+    borderRadius: 25,
+    backgroundColor: '#000',
     overflow: 'hidden',
-    elevation: 5
+    elevation: 8,
+    margin: 10
   },
 
   image: {
     width: '100%',
-    height: '65%'
+    height: '100%',
+    position: 'absolute'
   },
 
-  info: {
-    padding: 15
+  // DARK OVERLAY
+  gradient: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.35)'
+  },
+
+  // INFO AT BOTTOM
+  infoContainer: {
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+    right: 20
   },
 
   name: {
-    fontSize: 22,
+    color: '#fff',
+    fontSize: 28,
     fontWeight: 'bold'
+  },
+
+  role: {
+    color: '#FF4081',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 5
+  },
+
+  location: {
+    color: '#fff',
+    marginTop: 5,
+    fontSize: 14
   }
 
 });
