@@ -1,172 +1,136 @@
-// Import React and hooks
-import React, { useState, useEffect } from 'react';
-
-// Import UI components
-import { View, Text, StyleSheet, Alert, Image } from 'react-native';
-
-// Import swiper
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Alert, Image, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
-
-// Import axios
 import axios from 'axios';
 
-// ✅ RECEIVE USER FROM LOGIN (VERY IMPORTANT)
 export default function SwipeScreen({ route }) {
 
-  const { user } = route.params; // get logged-in user
-  const currentUser = user; // use as current user
+  const { user } = route.params;
+  const currentUser = user;
 
-  // Store users from database
   const [users, setUsers] = useState([]);
-
-  // Store matches
   const [matches, setMatches] = useState([]);
 
-  // Run when screen loads
+  const swiperRef = useRef(null);
+
   useEffect(() => {
-
-    console.log("Fetching users from API...");
-
     axios.get('http://192.168.0.216/eldercare-api/get_users.php')
       .then(res => {
+        if (!res.data) return;
 
-        console.log("API DATA:", res.data);
-
-        if (!res.data || res.data.length === 0) {
-          console.log("No users found");
-          return;
-        }
-
-        // ✅ FILTER BASED ON REAL USER ROLE
         const filtered = res.data.filter(u => {
-
-          // Do not include yourself
           if (u.id == currentUser.id) return false;
 
-          // Senior sees caregivers/volunteers
           if (currentUser.role === 'Senior') {
             return u.role === 'Caregiver' || u.role === 'Volunteer';
           }
 
-          // Caregiver/Volunteer sees seniors
           return u.role === 'Senior';
         });
 
-        console.log("Filtered Users:", filtered);
-
         setUsers(filtered);
       })
-      .catch(err => console.log("API ERROR:", err));
-
+      .catch(err => console.log(err));
   }, []);
 
-  // Swipe RIGHT (LIKE)
   const handleSwipeRight = (index) => {
-
     const selectedUser = users[index];
-
-    if (!selectedUser) {
-      console.log("No user found at index:", index);
-      return;
-    }
-
-    console.log("RIGHT SWIPE:", selectedUser);
+    if (!selectedUser) return;
 
     axios.post('http://192.168.0.216/eldercare-api/swipe.php', {
-      swiper_id: currentUser.id, // ✅ real user
+      swiper_id: currentUser.id,
       swiped_id: selectedUser.id,
       action: 'like'
     })
     .then(res => {
-
-      console.log("Swipe response:", res.data);
-
       if (res.data.match) {
         setMatches(prev => [...prev, selectedUser]);
-
         Alert.alert("🎉 Match!", `You matched with ${selectedUser.name}`);
       }
-    })
-    .catch(err => console.log("SWIPE ERROR:", err));
+    });
   };
 
-  // Swipe LEFT (PASS)
   const handleSwipeLeft = (index) => {
-
     const selectedUser = users[index];
-
-    if (!selectedUser) {
-      console.log("No user found on left swipe");
-      return;
-    }
-
-    console.log("LEFT SWIPE:", selectedUser);
+    if (!selectedUser) return;
   };
 
   return (
     <View style={styles.container}>
 
-      {/* Show logged in user */}
-      <Text style={{ textAlign: 'center', marginTop: 40 }}>
-        Logged in as: {currentUser.name} ({currentUser.role})
-      </Text>
+      {/* HEADER (FIXED) */}
+      <View style={styles.header}>
+        <Text style={styles.appTitle}>Elder Care Matters</Text>
+        <Text style={styles.matchText}>Matches: {matches.length}</Text>
+      </View>
 
-      {/* Show match count */}
-      <Text style={{ textAlign: 'center', marginBottom: 10 }}>
-        Matches: {matches.length}
-      </Text>
+      {/* SWIPER AREA */}
+      <View style={styles.swiperWrapper}>
+        <Swiper
+          ref={swiperRef}
+          cards={users}
+          key={users.length}
 
-      {/* Swiper */}
-      <Swiper
-        key={users.length}
-        cards={users}
+          containerStyle={styles.swiperContainer} // 👈 KEY FIX
 
-        renderCard={(card) => {
-          if (!card) return <View />;
+          renderCard={(card) => {
+            if (!card) return <View />;
 
-          return (
-            <View style={styles.card}>
+            return (
+              <View style={styles.card}>
 
-              {/* FULL IMAGE */}
-              <Image
-                source={{ uri: card.image }}
-                style={styles.image}
-              />
+                <Image source={{ uri: card.image }} style={styles.image} />
+                <View style={styles.gradient} />
 
-              {/* DARK OVERLAY (for readability) */}
-              <View style={styles.gradient} />
+                {/* INFO */}
+                <View style={styles.infoContainer}>
+                  <Text style={styles.name}>{card.name}, {card.age || "N/A"}</Text>
+                  <Text style={styles.role}>{card.role}</Text>
+                  <Text style={styles.location}>📍 {card.location}</Text>
+                </View>
 
-              {/* USER INFO */}
-              <View style={styles.infoContainer}>
+                {/* BUTTONS INSIDE CARD */}
+                <View style={styles.cardButtons}>
 
-                <Text style={styles.name}>
-                  {card.name}, {card.age || "N/A"}
-                </Text>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.passButton]}
+                    onPress={() => swiperRef.current?.swipeLeft()}
+                  >
+                    <Text style={styles.buttonIcon}>❌</Text>
+                  </TouchableOpacity>
 
-                <Text style={styles.role}>
-                  {card.role}
-                </Text>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.likeButton]}
+                    onPress={() => swiperRef.current?.swipeRight()}
+                  >
+                    <Text style={styles.buttonIcon}>❤️</Text>
+                  </TouchableOpacity>
 
-                <Text style={styles.location}>
-                  📍 {card.location}
-                </Text>
+                </View>
 
               </View>
+            );
+          }}
 
-            </View>
-          );
-        }}
+          onSwipedRight={handleSwipeRight}
+          onSwipedLeft={handleSwipeLeft}
+          stackSize={3}
 
-        onSwipedRight={handleSwipeRight}
-        onSwipedLeft={handleSwipeLeft}
-        stackSize={3}
-      />
+          overlayLabels={{
+            left: { title: 'NOPE', style: { label: styles.nopeLabel } },
+            right: { title: 'LIKE', style: { label: styles.likeLabel } }
+          }}
+
+          animateOverlayLabelsOpacity
+          animateCardOpacity
+        />
+      </View>
 
     </View>
   );
 }
 
-// Styles
+// STYLES
 const styles = StyleSheet.create({
 
   container: {
@@ -174,11 +138,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F7FA'
   },
 
+  // ✅ HEADER FIXED
+  header: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  appTitle: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#333'
+  },
+
+  matchText: {
+    color: '#FF4081',
+    fontWeight: 'bold'
+  },
+
+  // ✅ WRAPPER TO PREVENT OVERLAP
+  swiperWrapper: {
+    flex: 1
+  },
+
+  swiperContainer: {
+    marginTop: 10
+  },
+
   card: {
     flex: 1,
     borderRadius: 25,
-    backgroundColor: '#000',
     overflow: 'hidden',
+    backgroundColor: '#000',
     elevation: 8,
     margin: 10
   },
@@ -189,37 +180,74 @@ const styles = StyleSheet.create({
     position: 'absolute'
   },
 
-  // DARK OVERLAY
   gradient: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.35)'
   },
 
-  // INFO AT BOTTOM
   infoContainer: {
     position: 'absolute',
-    bottom: 30,
-    left: 20,
-    right: 20
+    bottom: 100,
+    left: 20
   },
 
   name: {
     color: '#fff',
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold'
   },
 
   role: {
-    color: '#FF4081',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 5
+    color: '#FF4081'
   },
 
   location: {
-    color: '#fff',
-    marginTop: 5,
-    fontSize: 14
+    color: '#fff'
+  },
+
+  cardButtons: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
+
+  actionButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  passButton: {
+    backgroundColor: '#FF5252'
+  },
+
+  likeButton: {
+    backgroundColor: '#4CAF50'
+  },
+
+  buttonIcon: {
+    fontSize: 24,
+    color: '#fff'
+  },
+
+  nopeLabel: {
+    backgroundColor: '#FF5252',
+    color: 'white',
+    fontSize: 28,
+    padding: 10,
+    borderRadius: 10
+  },
+
+  likeLabel: {
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    fontSize: 28,
+    padding: 10,
+    borderRadius: 10
   }
 
 });
