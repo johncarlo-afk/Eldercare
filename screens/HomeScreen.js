@@ -9,8 +9,10 @@ export default function HomeScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
 
+      {/* HEADER */}
       <Text style={styles.title}>Welcome {user.name} 👋</Text>
 
+      {/* FIND MATCHES CARD */}
       <TouchableOpacity
         style={styles.card}
         onPress={() => navigation.navigate('Swipe', { user })}
@@ -19,11 +21,21 @@ export default function HomeScreen({ navigation, route }) {
         <Text style={styles.subText}>Start connecting with elders</Text>
       </TouchableOpacity>
 
+      {/* PROFILE CARD */}
+      <TouchableOpacity
+        style={[styles.card, styles.profileCard]}
+        onPress={() => navigation.navigate('Profile', { user })}
+      >
+        <Text style={styles.cardText}>👤 My Profile</Text>
+        <Text style={styles.subText}>View and edit your info</Text>
+      </TouchableOpacity>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
     backgroundColor: '#F5F7FA',
@@ -44,7 +56,14 @@ const styles = StyleSheet.create({
     padding: 25,
     borderRadius: 20,
     elevation: 5,
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 15
+  },
+
+  // 👇 slight color variation for profile
+  profileCard: {
+    borderWidth: 1,
+    borderColor: '#ddd'
   },
 
   cardText: {
@@ -57,4 +76,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: '#777'
   }
+
 });
