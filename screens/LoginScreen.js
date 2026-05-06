@@ -26,11 +26,24 @@ export default function LoginScreen({ navigation }) {
 
       if (res.data.status === 'success') {
 
-        // Send user data to Home
-        navigation.navigate('Home', { user: res.data.user });
+        navigation.navigate('Home', {
+          user: res.data.user
+        });
+
+      } else if (res.data.status === 'pending') {
+
+        Alert.alert(
+          "Pending Approval",
+          "Your account is waiting for admin approval."
+        );
 
       } else {
-        Alert.alert("Error", "Invalid credentials");
+
+        Alert.alert(
+          "Login Failed",
+          "Invalid email or password"
+        );
+
       }
 
     })
