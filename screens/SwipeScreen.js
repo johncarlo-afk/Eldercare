@@ -29,7 +29,7 @@ import Swiper from 'react-native-deck-swiper';
 import axios from 'axios';
 
 // MAIN SCREEN FUNCTION
-export default function SwipeScreen({ route }) {
+export default function SwipeScreen({ route, navigation }) {
 
   // GET USER DATA FROM PREVIOUS SCREEN
   const { user } = route.params;
@@ -127,16 +127,37 @@ export default function SwipeScreen({ route }) {
       // IF MATCH EXISTS
       if (res.data.match) {
 
-        // SAVE MATCH
-        setMatches(prev => [
-          ...prev,
-          selectedUser
-        ]);
+        // SAVE MATCHED USER
+        setMatches(prev => [...prev, selectedUser]);
 
         // SHOW MATCH ALERT
         Alert.alert(
-          "🎉 Match!",
-          `You matched with ${selectedUser.name}`
+          '🎉 Match!',
+          `You matched with ${selectedUser.name}`,
+
+          [
+            {
+              text: 'Later',
+              style: 'cancel'
+            },
+
+            {
+              text: 'Schedule Meet',
+
+              onPress: () => {
+
+                // OPEN SCHEDULE SCREEN
+                navigation.navigate(
+                  'Schedule',
+
+                  {
+                    currentUser,
+                    matchedUser: selectedUser
+                  }
+                );
+              }
+            }
+          ]
         );
       }
     });

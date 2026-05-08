@@ -13,6 +13,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import SwipeScreen from '../screens/SwipeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import ScheduleScreen from '../screens/ScheduleScreen';
 
 // CREATE STACK
 const Stack = createNativeStackNavigator();
@@ -56,6 +57,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
+        />
+        
+        <Stack.Screen
+          name="Schedule"
+          component={ScheduleScreen}
         />
 
       </Stack.Navigator>
