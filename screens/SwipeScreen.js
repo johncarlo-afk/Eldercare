@@ -248,6 +248,10 @@ export default function SwipeScreen({ route, navigation }) {
                     {card.role}
                   </Text>
 
+                  <Text style={styles.bio}>
+                     {card.bio}
+                  </Text>
+
                   {/* LOCATION */}
                   <Text style={styles.location}>
                     📍 {card.location}
@@ -430,6 +434,11 @@ const styles = StyleSheet.create({
   // ROLE STYLE
   role: {
     color: '#FF4081'
+  },
+  
+  // BIO STYLE
+  bio: {
+    color: '#fff'
   },
 
   // LOCATION STYLE

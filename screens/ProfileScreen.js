@@ -54,9 +54,6 @@ export default function ProfileScreen({ route }) {
     user.bio || ''
   );
 
-  // SAMPLE USER RATING DISPLAY
-  const rating = user.rating || 4.5;
-
   // DISABLE EDITING IF USER ROLE IS SENIOR
   const isEditable = user.role !== 'Senior';
 
@@ -237,11 +234,6 @@ export default function ProfileScreen({ route }) {
 
       </TouchableOpacity>
 
-      {/* DISPLAY USER RATING */}
-      <Text style={styles.rating}>
-        ⭐ {rating}
-      </Text>
-
       {/* NAME INPUT */}
       <TextInput
         style={styles.input}
@@ -360,13 +352,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
 
-  // RATING TEXT STYLE
-  rating: {
-    textAlign: 'center',
-    fontSize: 18,
-    marginBottom: 20
-  },
-
+  
   // INPUT FIELD STYLE
   input: {
     backgroundColor: '#fff',

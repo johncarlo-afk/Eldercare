@@ -109,17 +109,29 @@ export default function RegisterScreen({ navigation }) {
     // IF REQUEST SUCCESS
     .then(res => {
 
-      // SHOW API RESPONSE
       console.log(res.data);
 
-      // SHOW SUCCESS MESSAGE
-      Alert.alert(
-        "Success",
-        "Account created successfully!"
-      );
+      // EMAIL ALREADY EXISTS
+      if (res.data.status === "exists") {
 
-      // GO BACK TO LOGIN SCREEN
-      navigation.navigate('Login');
+        Alert.alert(
+          "Email Exists",
+          "This email is already registered"
+        );
+
+        return;
+      }
+
+      // SUCCESS
+      if (res.data.status === "success") {
+
+        Alert.alert(
+          "Success",
+          "Account created successfully!"
+        );
+
+        navigation.navigate('Login');
+      }
 
     })
 

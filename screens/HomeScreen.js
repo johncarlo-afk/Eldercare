@@ -48,6 +48,47 @@ export default function HomeScreen({ navigation, route }) {
 
       </TouchableOpacity>
 
+      {/* SCHEDULES CARD */}
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() =>
+          navigation.navigate('Schedules', { user })
+        }
+      >
+
+        <Text style={styles.cardText}>
+          📅 My Schedules
+        </Text>
+
+        <Text style={styles.subText}>
+          View upcoming meetings
+        </Text>
+
+      </TouchableOpacity>
+
+      {/* NOTIFICATIONS BUTTON */}
+      <TouchableOpacity
+
+        style={styles.card}
+
+        onPress={() =>
+          navigation.navigate(
+            'Notifications',
+            { user }
+          )
+        }
+      >
+
+        <Text style={styles.cardText}>
+          🔔 Notifications
+        </Text>
+
+        <Text style={styles.subText}>
+          View updates and alerts
+        </Text>
+
+      </TouchableOpacity>
+
       {/* PROFILE BUTTON CARD */}
       <TouchableOpacity
 

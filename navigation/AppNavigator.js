@@ -14,6 +14,8 @@ import HomeScreen from '../screens/HomeScreen';
 import SwipeScreen from '../screens/SwipeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ScheduleScreen from '../screens/ScheduleScreen';
+import ScheduleListScreen from '../screens/ScheduleListScreen';
+import NotificationScreen from '../screens/NotificationScreen';
 
 // CREATE STACK
 const Stack = createNativeStackNavigator();
@@ -62,6 +64,16 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Schedule"
           component={ScheduleScreen}
+        />
+
+        <Stack.Screen
+          name="Schedules"
+          component={ScheduleListScreen}
+        />
+
+        <Stack.Screen
+          name="Notifications"
+          component={NotificationScreen}
         />
 
       </Stack.Navigator>
