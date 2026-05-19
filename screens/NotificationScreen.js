@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
+    marginTop: 30,
     textAlign: 'center'
   },
 

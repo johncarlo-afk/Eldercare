@@ -1,6 +1,8 @@
  // IMPORT REACT + STATE HOOK
 import React, { useState } from 'react';
-
+import { LinearGradient } from 'expo-linear-gradient';
+import * as ImagePicker from 'expo-image-picker';
+import FormData from 'form-data';
 // IMPORT REACT NATIVE COMPONENTS
 import {
   View,
@@ -9,7 +11,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  ScrollView
+  ScrollView,
+  ImageBackground,
+  Image
 } from 'react-native';
 
 // IMPORT AXIOS FOR API REQUESTS
@@ -42,6 +46,33 @@ export default function RegisterScreen({ navigation }) {
   // STORE USER ROLE
   const [role, setRole] = useState('Senior');
 
+  const [image, setImage] = useState('');
+
+  // PICK PROFILE IMAGE
+const pickImage = async () => {
+
+    // OPEN GALLERY
+    let result =
+      await ImagePicker.launchImageLibraryAsync({
+
+        mediaTypes:
+          ImagePicker.MediaTypeOptions.Images,
+
+        allowsEditing: true,
+
+        aspect: [1, 1],
+
+        quality: 1
+      });
+
+    // IF USER SELECTED IMAGE
+    if (!result.canceled) {
+
+      // SAVE IMAGE URI
+      setImage(result.assets[0].uri);
+    }
+  };
+
   // FUNCTION TO REGISTER USER
   const handleRegister = () => {
 
@@ -53,7 +84,8 @@ export default function RegisterScreen({ navigation }) {
       !location ||
       !email ||
       !password ||
-      !role
+      !role  ||
+      !image
     ) {
 
       Alert.alert(
@@ -102,7 +134,9 @@ export default function RegisterScreen({ navigation }) {
         password: password,
 
         // SEND USER ROLE
-        role: role
+        role: role,
+        // SEND USER IMAGE
+        image: image
       }
     )
 
@@ -151,138 +185,218 @@ export default function RegisterScreen({ navigation }) {
 
   return (
 
-    // ALLOW SCROLLING
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
+    <View style={{ flex: 1, backgroundColor: '#EAF4FF' }}>
 
-      {/* REGISTER CARD */}
-      <View style={styles.card}>
+      {/* TOP IMAGE */}
+      <ImageBackground
 
-        {/* SCREEN TITLE */}
-        <Text style={styles.title}>
-          Create Account
-        </Text>
+        source={require('../assets/elder1.jpg')}
 
-        {/* FULL NAME INPUT */}
-        <TextInput
-          placeholder="Full Name"
-          style={styles.input}
-          onChangeText={setName}
-        />
+        style={styles.topImage}
+      >
 
-        {/* AGE INPUT */}
-        <TextInput
-          placeholder="Age"
-          keyboardType="numeric"
-          style={styles.input}
-          onChangeText={setAge}
-        />
+        {/* BOTTOM GRADIENT */}
+        <LinearGradient
 
-        {/* LOCATION INPUT */}
-        <TextInput
-          placeholder="Location"
-          style={styles.input}
-          onChangeText={setLocation}
-        />
+          colors={[
+            'rgba(255, 255, 255, 1)',   // TOP DARK
+            'transparent',        // CENTER
+            'rgba(255,255,255,1)' // BOTTOM WHITE
+          ]}
 
-        {/* EMAIL INPUT */}
-        <TextInput
-          placeholder="Email"
-          style={styles.input}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          onChangeText={setEmail}
-        />
+          locations={[0, 0.45, 1]}
 
-        {/* PASSWORD INPUT */}
-        <TextInput
-          placeholder="Password"
-          secureTextEntry
-          style={styles.input}
-          onChangeText={setPassword}
-        />
+          style={styles.gradient}
+        >
 
-        {/* BIO INPUT */}
-        <TextInput
-          placeholder="Short Bio"
-          multiline
-          numberOfLines={4}
-          style={styles.bioInput}
-          onChangeText={setBio}
-        />
+          {/* TITLE */}
+          <Text style={styles.heroTitle}>
+            Create Account
+          </Text>
 
-        {/* ROLE DROPDOWN CONTAINER */}
-        <View style={styles.pickerContainer}>
+          {/* SUBTITLE */}
+          <Text style={styles.heroSubtitle}>
+            Join ElderCare Matter today
+          </Text>
 
-          {/* ROLE DROPDOWN */}
-          <Picker
-            selectedValue={role}
+        </LinearGradient>
 
-            // CHANGE ROLE VALUE
-            onValueChange={(itemValue) =>
-              setRole(itemValue)
-            }
+      </ImageBackground>
+
+      {/* FORM */}
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+
+        {/* REGISTER CARD */}
+        <View style={styles.card}>
+
+          {/* PROFILE IMAGE */}
+            <TouchableOpacity
+              style={styles.imagePicker}
+              onPress={pickImage}
+            >
+              <Text style={styles.uploadText}>
+                Upload Profile Photo
+              </Text>
+
+            </TouchableOpacity>
+
+          {/* FULL NAME INPUT */}
+          <TextInput
+            placeholder="Full Name"
+            style={styles.input}
+            onChangeText={setName}
+          />
+
+          {/* AGE INPUT */}
+          <TextInput
+            placeholder="Age"
+            keyboardType="numeric"
+            style={styles.input}
+            onChangeText={setAge}
+          />
+
+          {/* LOCATION INPUT */}
+          <TextInput
+            placeholder="Location"
+            style={styles.input}
+            onChangeText={setLocation}
+          />
+
+          {/* EMAIL INPUT */}
+          <TextInput
+            placeholder="Email"
+            style={styles.input}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            onChangeText={setEmail}
+          />
+
+          {/* PASSWORD INPUT */}
+          <TextInput
+            placeholder="Password"
+            secureTextEntry
+            style={styles.input}
+            onChangeText={setPassword}
+          />
+
+          {/* BIO INPUT */}
+          <TextInput
+            placeholder="Short Bio"
+            multiline
+            numberOfLines={4}
+            style={styles.bioInput}
+            onChangeText={setBio}
+          />
+
+          {/* ROLE PICKER */}
+          <View style={styles.pickerContainer}>
+
+            <Picker
+              selectedValue={role}
+              onValueChange={(itemValue) =>
+                setRole(itemValue)
+              }
+            >
+
+              <Picker.Item
+                label="Senior"
+                value="Senior"
+              />
+
+              <Picker.Item
+                label="Caregiver"
+                value="Caregiver"
+              />
+
+              <Picker.Item
+                label="Volunteer"
+                value="Volunteer"
+              />
+
+            </Picker>
+
+          </View>
+
+          {/* REGISTER BUTTON */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleRegister}
           >
 
-            {/* SENIOR OPTION */}
-            <Picker.Item
-              label="Senior"
-              value="Senior"
-            />
+            <Text style={styles.buttonText}>
+              Register
+            </Text>
 
-            {/* CAREGIVER OPTION */}
-            <Picker.Item
-              label="Caregiver"
-              value="Caregiver"
-            />
-
-            {/* VOLUNTEER OPTION */}
-            <Picker.Item
-              label="Volunteer"
-              value="Volunteer"
-            />
-
-          </Picker>
+          </TouchableOpacity>
 
         </View>
 
-        {/* REGISTER BUTTON */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleRegister}
-        >
+      </ScrollView>
 
-          <Text style={styles.buttonText}>
-            Register
-          </Text>
-
-        </TouchableOpacity>
-
-      </View>
-
-    </ScrollView>
+    </View>
   );
 }
 
 // SCREEN STYLES
 const styles = StyleSheet.create({
 
+  imagePicker: {
+    alignItems: 'center',
+    marginBottom: 20
+  },
+
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#F0F0F0'
+  },
+
+  uploadText: {
+    marginTop: 10,
+    color: '#2196F3',
+    fontWeight: 'bold'
+  },
+
+  topImage: {
+    height: 260,
+    width: '100%',
+    justifyContent: 'flex-end'
+  },
+
+  gradient: {
+    flex: 1,
+    padding: 25,
+    justifyContent: 'flex-end'
+  },
+
+  heroTitle: {
+    color: '#1E3A5F',
+    fontSize: 34,
+    fontWeight: 'bold'
+  },
+
+  heroSubtitle: {
+    color: '#1E3A5F',
+    marginTop: 8,
+    fontSize: 15
+  },
+
   // MAIN CONTAINER
   container: {
     flexGrow: 1,
-    backgroundColor: '#F5F7FA',
-    justifyContent: 'center',
-    padding: 20
+    marginTop: 1
   },
 
   // REGISTER CARD DESIGN
   card: {
+    flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 25,
     padding: 25,
-    elevation: 5
+    marginTop: -20
   },
 
   // TITLE DESIGN

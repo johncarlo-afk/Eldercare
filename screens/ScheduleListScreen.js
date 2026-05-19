@@ -191,7 +191,10 @@ export default function ScheduleListScreen({ route }) {
               </Text>
 
               {/* SHOW BUTTONS ONLY IF PENDING */}
-              {item.status === 'pending' && (
+              {
+                item.status === 'pending' &&
+                item.created_by &&
+                Number(item.created_by) !== Number(user.id) && (
 
                 <View>
 
@@ -277,6 +280,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
+    marginTop: 30,
     textAlign: 'center'
   },
 

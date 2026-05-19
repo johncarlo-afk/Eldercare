@@ -68,7 +68,9 @@ export default function ScheduleScreen({ route, navigation }) {
 
         meeting_location: meetingLocation,
 
-        notes: notes
+        notes: notes,
+
+        created_by: currentUser.id
       }
     )
 
@@ -200,7 +202,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#4A90E2',
     padding: 16,
     borderRadius: 12
   },

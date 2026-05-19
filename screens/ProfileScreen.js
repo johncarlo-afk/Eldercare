@@ -229,7 +229,7 @@ export default function ProfileScreen({ route }) {
 
         {/* BUTTON TEXT */}
         <Text style={styles.uploadText}>
-          Upload Profile Picture
+          Change Profile Picture
         </Text>
 
       </TouchableOpacity>
@@ -325,7 +325,8 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20
+    marginBottom: 20,
+    marginTop: 30
   },
 
   // PROFILE IMAGE STYLE
@@ -373,7 +374,7 @@ const styles = StyleSheet.create({
 
   // BUTTON STYLE
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#2196F3',
     padding: 16,
     borderRadius: 12,
     marginTop: 5

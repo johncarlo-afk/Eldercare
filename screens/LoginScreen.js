@@ -1,6 +1,6 @@
 // IMPORT REACT + STATE HOOK
 import React, { useState } from 'react';
-
+import { LinearGradient } from 'expo-linear-gradient';
 // IMPORT UI COMPONENTS
 import {
   View,
@@ -8,80 +8,64 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert
+  Alert,
+  StatusBar,
+  ImageBackground
 } from 'react-native';
 
-// IMPORT AXIOS FOR API REQUESTS
+// IMPORT AXIOS
 import axios from 'axios';
 
-// LOGIN SCREEN COMPONENT
+// LOGIN SCREEN
 export default function LoginScreen({ navigation }) {
 
-  // STORE EMAIL INPUT
+  // STATES
   const [email, setEmail] = useState('');
-
-  // STORE PASSWORD INPUT
   const [password, setPassword] = useState('');
 
-  // FUNCTION TO LOGIN USER
+  // LOGIN FUNCTION
   const handleLogin = () => {
 
-    // CHECK IF INPUTS ARE EMPTY
     if (!email || !password) {
 
       Alert.alert(
         "Error",
-        "Enter email and password"
+        "Please enter email and password"
       );
 
       return;
     }
 
-    // SEND LOGIN DATA TO PHP API
     axios.post(
       'http://192.168.0.216/eldercare-api/login.php',
 
       {
-        // SEND USER EMAIL
-        email: email,
-
-        // SEND USER PASSWORD
-        password: password
+        email,
+        password
       }
     )
 
     .then(res => {
 
-      // SHOW RESPONSE IN CONSOLE
-      console.log("LOGIN RESPONSE:", res.data);
+      console.log(res.data);
 
-      // IF LOGIN SUCCESS
       if (res.data.status === 'success') {
 
-        // GO TO HOME SCREEN
         navigation.navigate(
           'Home',
-
           {
-            // SEND LOGGED-IN USER DATA
             user: res.data.user
           }
         );
 
-      }
-
-      // IF ACCOUNT IS WAITING FOR APPROVAL
-      else if (res.data.status === 'pending') {
+      } else if (res.data.status === 'pending') {
 
         Alert.alert(
           "Pending Approval",
           "Your account is waiting for admin approval."
         );
 
-      }
-
-      // INVALID LOGIN
-      else {
+      } else {
 
         Alert.alert(
           "Login Failed",
@@ -91,11 +75,14 @@ export default function LoginScreen({ navigation }) {
 
     })
 
-    // CATCH API ERRORS
     .catch(err => {
 
-      console.log("LOGIN ERROR:", err);
+      console.log(err);
 
+      Alert.alert(
+        "Error",
+        "Something went wrong"
+      );
     });
   };
 
@@ -103,26 +90,60 @@ export default function LoginScreen({ navigation }) {
 
     <View style={styles.container}>
 
+      <StatusBar
+        backgroundColor="#EAF4FF"
+        barStyle="dark-content"
+      />
+
+      {/* TOP IMAGE */}
+      <ImageBackground
+
+        source={require('../assets/elder1.jpg')}
+
+        style={styles.topImage}
+      >
+
+        {/* BOTTOM GRADIENT */}
+        <LinearGradient
+
+          colors={[
+            'rgba(255, 255, 255, 1)',   // TOP DARK
+            'transparent',        // CENTER
+            'rgba(255,255,255,1)' // BOTTOM WHITE
+          ]}
+
+          locations={[0, 0.45, 1]}
+
+          style={styles.gradient}
+        >
+
+          <Text style={styles.heading}>
+            ElderCare Matter
+          </Text>
+
+          <Text style={styles.subheading}>
+            Safe companionship and care for seniors
+          </Text>
+
+        </LinearGradient>
+
+      </ImageBackground>
+
       {/* LOGIN CARD */}
       <View style={styles.card}>
 
-        {/* APP TITLE */}
-        <Text style={styles.title}>
-          Elder Care Matters
-        </Text>
-
-        {/* EMAIL INPUT */}
+        {/* EMAIL */}
         <TextInput
-          placeholder="Email"
+          placeholder="Enter Email"
           placeholderTextColor="#999"
           style={styles.input}
           value={email}
           onChangeText={setEmail}
         />
 
-        {/* PASSWORD INPUT */}
+        {/* PASSWORD */}
         <TextInput
-          placeholder="Password"
+          placeholder="Enter Password"
           placeholderTextColor="#999"
           secureTextEntry
           style={styles.input}
@@ -142,15 +163,18 @@ export default function LoginScreen({ navigation }) {
 
         </TouchableOpacity>
 
-        {/* GO TO REGISTER SCREEN */}
-        <Text
-          style={styles.link}
-          onPress={() => navigation.navigate('Register')}
+        {/* REGISTER LINK */}
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Register')
+          }
         >
 
-          Create Account
+          <Text style={styles.link}>
+            Create New Account
+          </Text>
 
-        </Text>
+        </TouchableOpacity>
 
       </View>
 
@@ -161,59 +185,83 @@ export default function LoginScreen({ navigation }) {
 // STYLES
 const styles = StyleSheet.create({
 
-  // MAIN SCREEN
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
-    justifyContent: 'center',
-    padding: 20
+    backgroundColor: '#EAF4FF'
   },
 
-  // LOGIN CARD DESIGN
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
+  logo: {
+    fontSize: 60,
+    textAlign: 'center'
+  },
+
+  heading: {
+    fontSize: 34,
+    fontWeight: 'bold',
+    color: '#1E3A5F'
+  },
+
+  subheading: {
+    color: '#1E3A5F',
+    marginTop: 8,
+    fontSize: 15,
+    lineHeight: 22
+  },
+
+  topImage: {
+    height: 280,
+    width: '100%',
+    justifyContent: 'flex-end',
+    overflow: 'hidden',
+    borderBottomLeftRadius: 1,
+    borderBottomRightRadius: 1
+  },
+
+  gradient: {
+    flex: 1,
     padding: 25,
+    justifyContent: 'flex-end'
+  },
+
+  card: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 1,
+    borderTopRightRadius: 1,
+    padding: 25,
+    marginTop: 1,
     elevation: 5
   },
 
-  // TITLE DESIGN
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 25,
+  input: {
+    backgroundColor: '#F5F7FA',
+    padding: 18,
+    borderRadius: 16,
+    marginBottom: 18,
+    fontSize: 16,
     color: '#333'
   },
 
-  // INPUT DESIGN
-  input: {
-    backgroundColor: '#F0F0F0',
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 15
-  },
-
-  // BUTTON DESIGN
   button: {
-    backgroundColor: '#2196F3',
-    padding: 15,
-    borderRadius: 12,
+    backgroundColor: '#4A90E2',
+    padding: 18,
+    borderRadius: 16,
     marginTop: 5
   },
 
-  // BUTTON TEXT DESIGN
   buttonText: {
     color: '#fff',
     textAlign: 'center',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontSize: 18
   },
 
-  // REGISTER LINK DESIGN
   link: {
-    marginTop: 15,
     textAlign: 'center',
-    color: '#333'
+    marginTop: 20,
+    color: '#4A90E2',
+    fontSize: 16,
+    fontWeight: '600'
   }
 
 });

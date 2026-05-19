@@ -29,7 +29,12 @@ export default function AppNavigator() {
     <NavigationContainer>
 
       {/* STACK NAVIGATION */}
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerShown: false
+        }}
+      >
 
         {/* LOGIN SCREEN */}
         <Stack.Screen
@@ -60,17 +65,20 @@ export default function AppNavigator() {
           name="Profile"
           component={ProfileScreen}
         />
-        
+
+        {/* SCHEDULE SCREEN */}
         <Stack.Screen
           name="Schedule"
           component={ScheduleScreen}
         />
 
+        {/* SCHEDULE LIST SCREEN */}
         <Stack.Screen
           name="Schedules"
           component={ScheduleListScreen}
         />
 
+        {/* NOTIFICATION SCREEN */}
         <Stack.Screen
           name="Notifications"
           component={NotificationScreen}

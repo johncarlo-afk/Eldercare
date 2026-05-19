@@ -1,75 +1,104 @@
 // IMPORT REACT
 import React from 'react';
 
-// IMPORT UI COMPONENTS
+// IMPORT COMPONENTS
 import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  ScrollView,
+  StatusBar
 } from 'react-native';
 
-// HOME SCREEN COMPONENT
+// HOME SCREEN
 export default function HomeScreen({ navigation, route }) {
 
-  // GET LOGGED-IN USER DATA
+  // GET USER
   const { user } = route.params;
 
   return (
 
-    // MAIN SCREEN CONTAINER
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
 
-      {/* WELCOME MESSAGE */}
-      <Text style={styles.title}>
-        Welcome {user.name} 👋
-      </Text>
+      <StatusBar
+        backgroundColor="#EAF4FF"
+        barStyle="dark-content"
+      />
 
-      {/* FIND MATCHES BUTTON CARD */}
+      {/* HEADER */}
+      <View style={styles.header}>
+
+        <Text style={styles.greeting}>
+          Hello 👋
+        </Text>
+
+        <Text style={styles.name}>
+          {user.name}
+        </Text>
+
+        <Text style={styles.subtitle}>
+          Welcome to ElderCare Matter
+        </Text>
+
+      </View>
+
+      {/* FIND MATCHES */}
       <TouchableOpacity
 
-        style={styles.card}
+        style={[styles.card, styles.blueCard]}
 
-        // GO TO SWIPE SCREEN
         onPress={() =>
           navigation.navigate('Swipe', { user })
         }
       >
 
-        {/* CARD TITLE */}
-        <Text style={styles.cardText}>
-          ❤️ Find Matches
+        <Text style={styles.cardIcon}>
+          ❤️
         </Text>
 
-        {/* CARD DESCRIPTION */}
-        <Text style={styles.subText}>
-          Start connecting with elders
+        <Text style={styles.cardTitle}>
+          Find Companions
+        </Text>
+
+        <Text style={styles.cardSubtitle}>
+          Start Connecting with others
         </Text>
 
       </TouchableOpacity>
 
-      {/* SCHEDULES CARD */}
+      {/* PROFILE BUTTON CARD */}
+      {/* SCHEDULES */}
       <TouchableOpacity
-        style={styles.card}
+
+        style={[styles.card, styles.greenCard]}
+
         onPress={() =>
           navigation.navigate('Schedules', { user })
         }
       >
 
-        <Text style={styles.cardText}>
-          📅 My Schedules
+        <Text style={styles.cardIcon}>
+          📅
         </Text>
 
-        <Text style={styles.subText}>
-          View upcoming meetings
+        <Text style={styles.cardTitle}>
+          My Schedules
+        </Text>
+
+        <Text style={styles.cardSubtitle}>
+          Check upcoming meetings
         </Text>
 
       </TouchableOpacity>
 
-      {/* NOTIFICATIONS BUTTON */}
+      {/* NOTIFICATIONS */}
       <TouchableOpacity
 
-        style={styles.card}
+        style={[styles.card, styles.orangeCard]}
 
         onPress={() =>
           navigation.navigate(
@@ -79,90 +108,120 @@ export default function HomeScreen({ navigation, route }) {
         }
       >
 
-        <Text style={styles.cardText}>
-          🔔 Notifications
+        <Text style={styles.cardIcon}>
+          🔔
         </Text>
 
-        <Text style={styles.subText}>
-          View updates and alerts
+        <Text style={styles.cardTitle}>
+          Notifications
+        </Text>
+
+        <Text style={styles.cardSubtitle}>
+          Alerts and important updates
         </Text>
 
       </TouchableOpacity>
 
-      {/* PROFILE BUTTON CARD */}
+      {/* PROFILE */}
       <TouchableOpacity
 
-        style={[styles.card, styles.profileCard]}
+        style={[styles.card, styles.whiteCard]}
 
-        // GO TO PROFILE SCREEN
         onPress={() =>
           navigation.navigate('Profile', { user })
         }
       >
 
-        {/* PROFILE CARD TITLE */}
-        <Text style={styles.cardText}>
-          👤 My Profile
+        <Text style={styles.cardIcon}>
+          👤
         </Text>
 
-        {/* PROFILE CARD DESCRIPTION */}
-        <Text style={styles.subText}>
-          View and edit your info
+        <Text style={styles.cardTitle}>
+          My Profile
+        </Text>
+
+        <Text style={styles.cardSubtitle}>
+          Edit your account information
         </Text>
 
       </TouchableOpacity>
 
-    </View>
+    </ScrollView>
   );
 }
 
-// SCREEN STYLES
+// STYLES
 const styles = StyleSheet.create({
 
-  // MAIN CONTAINER
   container: {
-    flex: 1,
-    backgroundColor: '#F5F7FA',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20
+    padding: 22,
+    backgroundColor: '#EAF4FF',
+    flexGrow: 1
   },
 
-  // WELCOME TITLE DESIGN
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  header: {
+    marginTop: 30,
     marginBottom: 30
   },
 
-  // CARD DESIGN
-  card: {
-    backgroundColor: '#fff',
-    width: '100%',
-    padding: 25,
-    borderRadius: 20,
-    elevation: 5,
-    alignItems: 'center',
-    marginBottom: 15
+  greeting: {
+    fontSize: 18,
+    color: '#666'
   },
 
-  // PROFILE CARD BORDER DESIGN
-  profileCard: {
-    borderWidth: 1,
-    borderColor: '#ddd'
-  },
-
-  // CARD TITLE DESIGN
-  cardText: {
-    fontSize: 20,
+  name: {
+    fontSize: 34,
     fontWeight: 'bold',
-    color: '#FF4081'
+    color: '#1E3A5F'
   },
 
-  // CARD SUBTITLE DESIGN
-  subText: {
-    marginTop: 5,
-    color: '#777'
+  subtitle: {
+    marginTop: 6,
+    color: '#6B7280',
+    fontSize: 16
+  },
+
+  card: {
+    borderRadius: 28,
+    padding: 25,
+    marginBottom: 18,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 5
+  },
+
+  blueCard: {
+    backgroundColor: '#D9EEFF'
+  },
+
+  greenCard: {
+    backgroundColor: '#DDF5E5'
+  },
+
+  orangeCard: {
+    backgroundColor: '#FFE9D6'
+  },
+
+  whiteCard: {
+    backgroundColor: '#FFFFFF'
+  },
+
+  cardIcon: {
+    fontSize: 38,
+    marginBottom: 12
+  },
+
+  cardTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1E3A5F'
+  },
+
+  cardSubtitle: {
+    marginTop: 6,
+    fontSize: 15,
+    color: '#555'
   }
 
 });
