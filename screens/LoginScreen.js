@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }) {
     }
 
     axios.post(
-      'http://192.168.0.216/eldercare-api/login.php',
+      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/login.php',
 
       {
         email,

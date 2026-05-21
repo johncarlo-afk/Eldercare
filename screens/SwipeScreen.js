@@ -42,7 +42,7 @@ export default function SwipeScreen({
   useEffect(() => {
 
     axios.get(
-      'http://192.168.0.216/eldercare-api/get_users.php'
+      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/get_users.php'
     )
 
     .then(res => {
@@ -82,7 +82,7 @@ export default function SwipeScreen({
     if (!selectedUser) return;
 
     axios.post(
-      'http://192.168.0.216/eldercare-api/swipe.php',
+      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/swipe.php',
 
       {
         swiper_id: currentUser.id,

@@ -1,0 +1,147 @@
+  container: {
+    flex: 1,
+    backgroundColor: '#EAF4FF'
+  },
+
+  header: {
+    marginTop: 80,
+    alignItems: 'center'
+  },
+
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#1E3A5F'
+  },
+
+  matchText: {
+    marginTop: 8,
+    color: '#FF5A7A',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+
+  swiperContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 110
+  },
+
+  // CARD DESIGN
+  card: {
+    height: 500,
+    borderRadius: 25,
+    overflow: 'hidden',
+    backgroundColor: '#000',
+    elevation: 8,
+    margin: 10
+  },
+
+  // IMAGE STYLE
+  image: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute'
+  },
+
+  // DARK OVERLAY
+  gradient: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.35)'
+  },
+
+  // USER INFO POSITION
+  infoContainer: {
+    position: 'absolute',
+    bottom: 100,
+    left: 20
+  },
+
+  // NAME STYLE
+  name: {
+    color: '#fff',
+    fontSize: 26,
+    fontWeight: 'bold'
+  },
+
+  // ROLE STYLE
+  role: {
+    color: '#FF4081',
+    marginTop: 5,
+    fontSize: 16,
+    fontWeight: '600'
+  },
+  
+  // BIO STYLE
+  bio: {
+    color: '#fff',
+    marginTop: 12,
+    fontSize: 15
+  },
+
+  // LOCATION STYLE
+  location: {
+    color: '#fff',
+    marginTop: 10
+  },
+
+  // BUTTON CONTAINER
+  cardButtons: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
+
+  // BUTTON STYLE
+  actionButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  passButton: {
+    backgroundColor: '#FF6B6B'
+  },
+
+  likeButton: {
+    backgroundColor: '#4CAF50'
+  },
+
+  buttonText: {
+    fontSize: 28,
+    color: '#fff'
+  },
+
+  nopeLabel: {
+    backgroundColor: '#FF6B6B',
+    color: '#fff',
+    fontSize: 24,
+    padding: 10,
+    borderRadius: 10
+  },
+
+  likeLabel: {
+    backgroundColor: '#4CAF50',
+    color: '#fff',
+    fontSize: 24,
+    padding: 10,
+    borderRadius: 10
+  },
+
+  emptyCard: {
+    flex: 1,
+    borderRadius: 30,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  emptyText: {
+    fontSize: 22,
+    color: '#999'
+  }

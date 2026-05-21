@@ -31,7 +31,7 @@ export default function ScheduleListScreen({ route }) {
   useEffect(() => {
 
     axios.get(
-      `http://192.168.0.216/eldercare-api/get_schedules.php?user_id=${user.id}`
+      `https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/get_schedules.php?user_id=${user.id}`
     )
 
     .then(res => {
@@ -65,7 +65,7 @@ export default function ScheduleListScreen({ route }) {
 
     axios.post(
 
-      'http://192.168.0.216/eldercare-api/update_schedule_status.php',
+      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/update_schedule_status.php',
 
       {
         schedule_id: scheduleId,

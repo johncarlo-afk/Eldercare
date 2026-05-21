@@ -1,8 +1,9 @@
- // IMPORT REACT + STATE HOOK
+// IMPORT REACT + STATE HOOK
 import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 import FormData from 'form-data';
+
 // IMPORT REACT NATIVE COMPONENTS
 import {
   View,
@@ -46,10 +47,11 @@ export default function RegisterScreen({ navigation }) {
   // STORE USER ROLE
   const [role, setRole] = useState('Senior');
 
+  // STORE USER IMAGE
   const [image, setImage] = useState('');
 
   // PICK PROFILE IMAGE
-const pickImage = async () => {
+  const pickImage = async () => {
 
     // OPEN GALLERY
     let result =
@@ -74,7 +76,8 @@ const pickImage = async () => {
   };
 
   // FUNCTION TO REGISTER USER
-  const handleRegister = () => {
+  // FUNCTION TO REGISTER USER
+  const handleRegister = async () => {
 
     // CHECK IF THERE ARE EMPTY FIELDS
     if (
@@ -84,7 +87,7 @@ const pickImage = async () => {
       !location ||
       !email ||
       !password ||
-      !role  ||
+      !role ||
       !image
     ) {
 
@@ -96,10 +99,10 @@ const pickImage = async () => {
       return;
     }
 
-    // EMAIL FORMAT VALIDATION
+    // EMAIL VALIDATION
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // CHECK IF EMAIL IS VALID
+    // CHECK EMAIL FORMAT
     if (!emailRegex.test(email)) {
 
       Alert.alert(
@@ -110,42 +113,47 @@ const pickImage = async () => {
       return;
     }
 
-    // SEND USER DATA TO REGISTER API
-    axios.post(
-      'http://192.168.0.216/eldercare-api/register.php',
+    try {
 
-      {
-        // SEND USER NAME
-        name: name,
+      // CREATE FORM DATA
+      const formData = new FormData();
 
-        // SEND USER AGE
-        age: parseInt(age),
+      // APPEND TEXT DATA
+      formData.append('name', name);
+      formData.append('age', age);
+      formData.append('bio', bio);
+      formData.append('location', location);
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('role', role);
 
-        // SEND USER BIO
-        bio: bio,
+      // APPEND IMAGE FILE
+      formData.append('image', {
 
-        // SEND USER LOCATION
-        location: location,
+        uri: image,
+        name: 'profile.jpg',
+        type: 'image/jpeg'
 
-        // SEND USER EMAIL
-        email: email,
+      });
 
-        // SEND USER PASSWORD
-        password: password,
+      // SEND DATA TO API
+      const res = await axios.post(
 
-        // SEND USER ROLE
-        role: role,
-        // SEND USER IMAGE
-        image: image
-      }
-    )
+        'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/register.php',
 
-    // IF REQUEST SUCCESS
-    .then(res => {
+        formData,
+
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+
+      );
 
       console.log(res.data);
 
-      // EMAIL ALREADY EXISTS
+      // EMAIL EXISTS
       if (res.data.status === "exists") {
 
         Alert.alert(
@@ -167,20 +175,15 @@ const pickImage = async () => {
         navigation.navigate('Login');
       }
 
-    })
+    } catch (err) {
 
-    // IF REQUEST FAILED
-    .catch(err => {
-
-      // SHOW ERROR IN CONSOLE
       console.log("REGISTER ERROR:", err);
 
-      // SHOW ERROR ALERT
       Alert.alert(
         "Error",
         "Registration failed"
       );
-    });
+    }
   };
 
   return (
@@ -199,9 +202,9 @@ const pickImage = async () => {
         <LinearGradient
 
           colors={[
-            'rgba(255, 255, 255, 1)',   // TOP DARK
-            'transparent',        // CENTER
-            'rgba(255,255,255,1)' // BOTTOM WHITE
+            'rgba(255, 255, 255, 1)',
+            'transparent',
+            'rgba(255,255,255,1)'
           ]}
 
           locations={[0, 0.45, 1]}
@@ -233,19 +236,32 @@ const pickImage = async () => {
         <View style={styles.card}>
 
           {/* PROFILE IMAGE */}
-            <TouchableOpacity
-              style={styles.imagePicker}
-              onPress={pickImage}
-            >
-              <Text style={styles.uploadText}>
-                Upload Profile Photo
-              </Text>
+          <TouchableOpacity
+            style={styles.imagePicker}
+            onPress={pickImage}
+          >
 
-            </TouchableOpacity>
+            {
+              image ? (
+                <Image
+                  source={{ uri: image }}
+                  style={styles.profileImage}
+                />
+              ) : (
+                <View style={styles.profilePlaceholder}>
+                  <Text style={styles.uploadText}>
+                    Upload Profile Photo
+                  </Text>
+                </View>
+              )
+            }
+
+          </TouchableOpacity>
 
           {/* FULL NAME INPUT */}
           <TextInput
             placeholder="Full Name"
+            placeholderTextColor="#666"
             style={styles.input}
             onChangeText={setName}
           />
@@ -253,6 +269,7 @@ const pickImage = async () => {
           {/* AGE INPUT */}
           <TextInput
             placeholder="Age"
+            placeholderTextColor="#666"
             keyboardType="numeric"
             style={styles.input}
             onChangeText={setAge}
@@ -261,6 +278,7 @@ const pickImage = async () => {
           {/* LOCATION INPUT */}
           <TextInput
             placeholder="Location"
+            placeholderTextColor="#666"
             style={styles.input}
             onChangeText={setLocation}
           />
@@ -268,6 +286,7 @@ const pickImage = async () => {
           {/* EMAIL INPUT */}
           <TextInput
             placeholder="Email"
+            placeholderTextColor="#666"
             style={styles.input}
             keyboardType="email-address"
             autoCapitalize="none"
@@ -277,6 +296,7 @@ const pickImage = async () => {
           {/* PASSWORD INPUT */}
           <TextInput
             placeholder="Password"
+            placeholderTextColor="#666"
             secureTextEntry
             style={styles.input}
             onChangeText={setPassword}
@@ -285,6 +305,7 @@ const pickImage = async () => {
           {/* BIO INPUT */}
           <TextInput
             placeholder="Short Bio"
+            placeholderTextColor="#666"
             multiline
             numberOfLines={4}
             style={styles.bioInput}
@@ -351,14 +372,23 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 120,
     height: 120,
+    borderRadius: 60
+  },
+
+  profilePlaceholder: {
+    width: 120,
+    height: 120,
     borderRadius: 60,
-    backgroundColor: '#F0F0F0'
+    backgroundColor: '#F0F0F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10
   },
 
   uploadText: {
-    marginTop: 10,
     color: '#2196F3',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: 'center'
   },
 
   topImage: {
@@ -399,21 +429,13 @@ const styles = StyleSheet.create({
     marginTop: -20
   },
 
-  // TITLE DESIGN
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 25,
-    color: '#333'
-  },
-
   // INPUT FIELD DESIGN
   input: {
     backgroundColor: '#F0F0F0',
     padding: 15,
     borderRadius: 12,
-    marginBottom: 15
+    marginBottom: 15,
+    color: '#000'
   },
 
   // BIO INPUT DESIGN
@@ -423,7 +445,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 15,
     height: 100,
-    textAlignVertical: 'top'
+    textAlignVertical: 'top',
+    color: '#000'
   },
 
   // DROPDOWN CONTAINER DESIGN
@@ -431,7 +454,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     borderRadius: 12,
     marginBottom: 20,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    color: '#000'
   },
 
   // BUTTON DESIGN

@@ -49,7 +49,7 @@ export default function ScheduleScreen({ route, navigation }) {
 
     // SEND DATA TO PHP API
     axios.post(
-      'http://192.168.0.216/eldercare-api/create_schedule.php',
+      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/create_schedule.php',
 
       {
         senior_id:
@@ -116,6 +116,7 @@ export default function ScheduleScreen({ route, navigation }) {
       {/* DATE INPUT */}
       <TextInput
         placeholder="Meeting Date (YYYY-MM-DD)"
+        placeholderTextColor="#666"
         style={styles.input}
         value={meetingDate}
         onChangeText={setMeetingDate}
@@ -124,6 +125,7 @@ export default function ScheduleScreen({ route, navigation }) {
       {/* TIME INPUT */}
       <TextInput
         placeholder="Meeting Time (HH:MM:SS)"
+        placeholderTextColor="#666"
         style={styles.input}
         value={meetingTime}
         onChangeText={setMeetingTime}
@@ -132,6 +134,7 @@ export default function ScheduleScreen({ route, navigation }) {
       {/* LOCATION INPUT */}
       <TextInput
         placeholder="Meeting Location"
+        placeholderTextColor="#666"
         style={styles.input}
         value={meetingLocation}
         onChangeText={setMeetingLocation}
@@ -140,6 +143,7 @@ export default function ScheduleScreen({ route, navigation }) {
       {/* NOTES INPUT */}
       <TextInput
         placeholder="Notes"
+        placeholderTextColor="#666"
         multiline
         style={styles.notesInput}
         value={notes}
@@ -176,29 +180,39 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10
+    marginBottom: 10,
+    color: '#1E3A5F'
   },
 
   subtitle: {
     textAlign: 'center',
     marginBottom: 25,
-    color: '#666'
+    color: '#555',
+    fontSize: 16
   },
 
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     padding: 15,
     borderRadius: 12,
-    marginBottom: 15
+    marginBottom: 15,
+    color: '#222',
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#D6E4F0'
   },
 
   notesInput: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     padding: 15,
     borderRadius: 12,
     marginBottom: 15,
     height: 120,
-    textAlignVertical: 'top'
+    textAlignVertical: 'top',
+    color: '#222',
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#D6E4F0'
   },
 
   button: {
@@ -208,7 +222,7 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 16

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "eldercare-app",
+    "name": "Eldercare",
     "slug": "eldercare-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,17 +16,24 @@
       "supportsTablet": true
     },
     "android": {
+      "permissions": ["INTERNET"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.joegraduate.eldercareapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2edf2f12-7e16-41b4-bb67-1fd58421db4d"
+      }
+    }
   }
 }

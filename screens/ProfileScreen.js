@@ -110,7 +110,7 @@ export default function ProfileScreen({ route }) {
       axios.post(
 
         // PHP API URL
-        'http://192.168.0.216/eldercare-api/upload_image.php',
+        'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/upload_image.php',
 
         // SEND FORM DATA
         formData,
@@ -165,7 +165,7 @@ export default function ProfileScreen({ route }) {
     axios.post(
 
       // PHP API URL
-      'http://192.168.0.216/eldercare-api/update_profile.php',
+      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/update_profile.php',
 
       // DATA TO SEND
       {
