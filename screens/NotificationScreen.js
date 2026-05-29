@@ -25,7 +25,7 @@ export default function NotificationScreen({ route }) {
   useEffect(() => {
 
     axios.get(
-      `https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/get_notifications.php?user_id=${user.id}`
+      `http://192.168.0.216/eldercare-api/get_notifications.php?user_id=${user.id}`
     )
 
     .then(res => {

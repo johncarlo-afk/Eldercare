@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 import FormData from 'form-data';
-
+import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 // IMPORT REACT NATIVE COMPONENTS
 import {
   View,
@@ -44,11 +45,28 @@ export default function RegisterScreen({ navigation }) {
   // STORE USER PASSWORD
   const [password, setPassword] = useState('');
 
+  // SHOW PASSWORD
+  const [showPassword, setShowPassword] = useState(false);
+
   // STORE USER ROLE
   const [role, setRole] = useState('Senior');
 
   // STORE USER IMAGE
   const [image, setImage] = useState('');
+
+  // STORE USER GENDER
+  const [gender, setGender] = useState('Male');
+
+  // STORE USER BIRTH DATE
+  const [birthDate, setBirthDate] = useState('');
+
+  // DATE PICKER
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const [date, setDate] = useState(new Date());
+
+  // STORE VALID ID IMAGE
+  const [validId, setValidId] = useState('');
 
   // PICK PROFILE IMAGE
   const pickImage = async () => {
@@ -75,6 +93,27 @@ export default function RegisterScreen({ navigation }) {
     }
   };
 
+  // PICK VALID ID IMAGE
+  const pickValidId = async () => {
+
+    let result =
+      await ImagePicker.launchImageLibraryAsync({
+
+        mediaTypes:
+          ImagePicker.MediaTypeOptions.Images,
+
+        allowsEditing: true,
+
+        quality: 1
+      });
+
+    // IF USER SELECTED IMAGE
+    if (!result.canceled) {
+
+      setValidId(result.assets[0].uri);
+    }
+  };
+
   // FUNCTION TO REGISTER USER
   // FUNCTION TO REGISTER USER
   const handleRegister = async () => {
@@ -88,6 +127,9 @@ export default function RegisterScreen({ navigation }) {
       !email ||
       !password ||
       !role ||
+      !gender ||
+      !birthDate ||
+      !validId ||
       !image
     ) {
 
@@ -113,6 +155,17 @@ export default function RegisterScreen({ navigation }) {
       return;
     }
 
+    // PASSWORD LENGTH VALIDATION
+    if (password.length < 6) {
+
+      Alert.alert(
+        "Weak Password",
+        "Password must be at least 6 characters"
+      );
+
+      return;
+    }
+
     try {
 
       // CREATE FORM DATA
@@ -126,6 +179,17 @@ export default function RegisterScreen({ navigation }) {
       formData.append('email', email);
       formData.append('password', password);
       formData.append('role', role);
+      formData.append('gender', gender);
+      formData.append('birth_date', birthDate);
+
+      // APPEND VALID ID IMAGE
+      formData.append('valid_id', {
+
+        uri: validId,
+        name: 'valid_id.jpg',
+        type: 'image/jpeg'
+
+      });
 
       // APPEND IMAGE FILE
       formData.append('image', {
@@ -139,7 +203,7 @@ export default function RegisterScreen({ navigation }) {
       // SEND DATA TO API
       const res = await axios.post(
 
-        'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/register.php',
+        'http://192.168.0.216/eldercare-api/register.php',
 
         formData,
 
@@ -258,6 +322,34 @@ export default function RegisterScreen({ navigation }) {
 
           </TouchableOpacity>
 
+          {/* VALID ID UPLOAD */}
+          <TouchableOpacity
+            style={styles.validIdContainer}
+            onPress={pickValidId}
+          >
+
+            {
+              validId ? (
+
+                <Image
+                  source={{ uri: validId }}
+                  style={styles.validIdImage}
+                />
+
+              ) : (
+
+                <View style={styles.validIdPlaceholder}>
+
+                  <Text style={styles.validIdText}>
+                    Upload Valid ID
+                  </Text>
+
+                </View>
+              )
+            }
+
+          </TouchableOpacity>
+
           {/* FULL NAME INPUT */}
           <TextInput
             placeholder="Full Name"
@@ -274,6 +366,83 @@ export default function RegisterScreen({ navigation }) {
             style={styles.input}
             onChangeText={setAge}
           />
+
+          {/* GENDER PICKER */}
+          <View style={styles.pickerContainer}>
+
+            <Picker
+              selectedValue={gender}
+              dropdownIconColor="#000"
+              style={styles.picker}
+              onValueChange={(itemValue) =>
+                setGender(itemValue)
+              }
+            >
+
+              <Picker.Item
+                label="Male"
+                value="Male"
+              />
+
+              <Picker.Item
+                label="Female"
+                value="Female"
+              />
+
+            </Picker>
+
+          </View>
+
+          {/* BIRTH DATE PICKER */}
+          <TouchableOpacity
+            style={styles.input}
+            onPress={() => setShowDatePicker(true)}
+          >
+
+            <Text
+              style={{
+                color: birthDate ? '#000' : '#666',
+                fontSize: 16
+              }}
+            >
+              {
+                birthDate
+                  ? birthDate
+                  : 'Select Birth Date'
+              }
+            </Text>
+
+          </TouchableOpacity>
+
+          {
+            showDatePicker && (
+
+              <DateTimePicker
+                value={date}
+                mode="date"
+                display="default"
+
+                onChange={(event, selectedDate) => {
+
+                  setShowDatePicker(false);
+
+                  if (selectedDate) {
+
+                    setDate(selectedDate);
+
+                    // FORMAT DATE
+                    const formattedDate =
+                      selectedDate
+                        .toISOString()
+                        .split('T')[0];
+
+                    setBirthDate(formattedDate);
+                  }
+                }}
+              />
+
+            )
+          }
 
           {/* LOCATION INPUT */}
           <TextInput
@@ -294,13 +463,30 @@ export default function RegisterScreen({ navigation }) {
           />
 
           {/* PASSWORD INPUT */}
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="#666"
-            secureTextEntry
-            style={styles.input}
-            onChangeText={setPassword}
-          />
+          <View style={styles.passwordContainer}>
+
+            <TextInput
+              placeholder="Password"
+              placeholderTextColor="#666"
+              secureTextEntry={!showPassword}
+              style={styles.passwordInput}
+              onChangeText={setPassword}
+              minLength={6}
+            />
+
+            <TouchableOpacity
+              onPress={() => setShowPassword(!showPassword)}
+            >
+
+              <Ionicons
+                name={showPassword ? 'eye-off' : 'eye'}
+                size={24}
+                color="#666"
+              />
+
+            </TouchableOpacity>
+
+          </View>
 
           {/* BIO INPUT */}
           <TextInput
@@ -317,6 +503,8 @@ export default function RegisterScreen({ navigation }) {
 
             <Picker
               selectedValue={role}
+              dropdownIconColor="#000"
+              style={styles.picker}
               onValueChange={(itemValue) =>
                 setRole(itemValue)
               }
@@ -471,6 +659,52 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 16
-  }
+  },
+
+  passwordContainer: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 12,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+
+  passwordInput: {
+    flex: 1,
+    paddingVertical: 15,
+    color: '#000',
+    fontSize: 16
+  },
+
+  picker: {
+    color: '#000'
+  },
+
+  validIdContainer: {
+    alignItems: 'center',
+    marginBottom: 20
+  },
+
+  validIdImage: {
+    width: '100%',
+    height: 180,
+    borderRadius: 15
+  },
+
+  validIdPlaceholder: {
+    width: '100%',
+    height: 180,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  validIdText: {
+    color: '#2196F3',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
 
 });

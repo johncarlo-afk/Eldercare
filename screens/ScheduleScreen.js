@@ -1,6 +1,9 @@
 // IMPORT REACT
 import React, { useState } from 'react';
 
+// IMPORT DATE TIME PICKER
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 // IMPORT REACT NATIVE COMPONENTS
 import {
   View,
@@ -12,32 +15,61 @@ import {
   ScrollView
 } from 'react-native';
 
-// IMPORT AXIOS FOR API REQUESTS
+// IMPORT AXIOS
 import axios from 'axios';
 
 // EXPORT SCREEN
-export default function ScheduleScreen({ route, navigation }) {
+export default function ScheduleScreen({
+  route,
+  navigation
+}) {
 
-  // GET USERS FROM PREVIOUS SCREEN
-  const { currentUser, matchedUser } = route.params;
+  // GET USERS
+  const {
+    currentUser,
+    matchedUser
+  } = route.params;
 
-  // STORE DATE INPUT
+  // DATE STATE
   const [meetingDate, setMeetingDate] = useState('');
 
-  // STORE TIME INPUT
+  // TIME STATE
   const [meetingTime, setMeetingTime] = useState('');
 
-  // STORE LOCATION INPUT
+  // LOCATION STATE
   const [meetingLocation, setMeetingLocation] = useState('');
 
-  // STORE NOTES INPUT
+  // EMERGENCY CONTACT STATE
+  const [emergencyContact, setEmergencyContact] =
+    useState('');
+
+  // NOTES STATE
   const [notes, setNotes] = useState('');
 
-  // CREATE SCHEDULE FUNCTION
+  // SHOW DATE PICKER
+  const [showDatePicker, setShowDatePicker] =
+    useState(false);
+
+  // SHOW TIME PICKER
+  const [showTimePicker, setShowTimePicker] =
+    useState(false);
+
+  // DATE OBJECT
+  const [date, setDate] = useState(new Date());
+
+  // TIME OBJECT
+  const [time, setTime] = useState(new Date());
+
+  // CREATE SCHEDULE
   const handleCreateSchedule = () => {
 
-    // CHECK IF FIELDS ARE EMPTY
-    if (!meetingDate || !meetingTime || !meetingLocation) {
+    // VALIDATION
+    if (
+      !meetingDate ||
+      !meetingTime ||
+      !meetingLocation ||
+      !emergencyContact
+    ) {
 
       Alert.alert(
         'Error',
@@ -47,9 +79,9 @@ export default function ScheduleScreen({ route, navigation }) {
       return;
     }
 
-    // SEND DATA TO PHP API
+    // SEND TO API
     axios.post(
-      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/create_schedule.php',
+      'http://192.168.0.216/eldercare-api/create_schedule.php',
 
       {
         senior_id:
@@ -68,13 +100,14 @@ export default function ScheduleScreen({ route, navigation }) {
 
         meeting_location: meetingLocation,
 
+        emergency_contact: emergencyContact,
+
         notes: notes,
 
         created_by: currentUser.id
       }
     )
 
-    // IF SUCCESS
     .then(res => {
 
       console.log(res.data);
@@ -87,7 +120,6 @@ export default function ScheduleScreen({ route, navigation }) {
       navigation.goBack();
     })
 
-    // IF ERROR
     .catch(err => {
 
       console.log(err);
@@ -101,37 +133,170 @@ export default function ScheduleScreen({ route, navigation }) {
 
   return (
 
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+    >
 
-      {/* SCREEN TITLE */}
+      {/* TITLE */}
       <Text style={styles.title}>
         Create Schedule
       </Text>
 
-      {/* MATCHED USER NAME */}
+      {/* SUBTITLE */}
       <Text style={styles.subtitle}>
         Meeting with {matchedUser.name}
       </Text>
 
-      {/* DATE INPUT */}
-      <TextInput
-        placeholder="Meeting Date (YYYY-MM-DD)"
-        placeholderTextColor="#666"
+      {/* DATE PICKER */}
+      <TouchableOpacity
         style={styles.input}
-        value={meetingDate}
-        onChangeText={setMeetingDate}
-      />
+        onPress={() =>
+          setShowDatePicker(true)
+        }
+      >
 
-      {/* TIME INPUT */}
-      <TextInput
-        placeholder="Meeting Time (HH:MM:SS)"
-        placeholderTextColor="#666"
+        <Text
+          style={{
+            color:
+              meetingDate
+                ? '#000'
+                : '#666',
+            fontSize: 16
+          }}
+        >
+
+          {
+            meetingDate
+              ? meetingDate
+              : 'Select Meeting Date'
+          }
+
+        </Text>
+
+      </TouchableOpacity>
+
+      {
+        showDatePicker && (
+
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display="default"
+
+            onChange={(
+              event,
+              selectedDate
+            ) => {
+
+              setShowDatePicker(false);
+
+              if (selectedDate) {
+
+                setDate(selectedDate);
+
+                // FORMAT DATE
+                const formattedDate =
+                  selectedDate
+                    .toISOString()
+                    .split('T')[0];
+
+                setMeetingDate(
+                  formattedDate
+                );
+              }
+            }}
+          />
+
+        )
+      }
+
+      {/* TIME PICKER */}
+      <TouchableOpacity
         style={styles.input}
-        value={meetingTime}
-        onChangeText={setMeetingTime}
-      />
+        onPress={() =>
+          setShowTimePicker(true)
+        }
+      >
 
-      {/* LOCATION INPUT */}
+        <Text
+          style={{
+            color:
+              meetingTime
+                ? '#000'
+                : '#666',
+            fontSize: 16
+          }}
+        >
+
+          {
+            meetingTime
+              ? meetingTime
+              : 'Select Meeting Time'
+          }
+
+        </Text>
+
+      </TouchableOpacity>
+
+      {
+        showTimePicker && (
+
+          <DateTimePicker
+            value={time}
+            mode="time"
+            display="default"
+
+            onChange={(
+              event,
+              selectedTime
+            ) => {
+
+              setShowTimePicker(false);
+
+              if (selectedTime) {
+
+                setTime(selectedTime);
+
+                // FORMAT TIME
+                let hours =
+                  selectedTime.getHours();
+
+                let minutes =
+                  selectedTime
+                    .getMinutes();
+
+                let ampm =
+                  hours >= 12
+                    ? 'PM'
+                    : 'AM';
+
+                hours =
+                  hours % 12;
+
+                hours =
+                  hours
+                    ? hours
+                    : 12;
+
+                minutes =
+                  minutes < 10
+                    ? '0' + minutes
+                    : minutes;
+
+                const formattedTime =
+                  `${hours}:${minutes} ${ampm}`;
+
+                setMeetingTime(
+                  formattedTime
+                );
+              }
+            }}
+          />
+
+        )
+      }
+
+      {/* LOCATION */}
       <TextInput
         placeholder="Meeting Location"
         placeholderTextColor="#666"
@@ -140,7 +305,17 @@ export default function ScheduleScreen({ route, navigation }) {
         onChangeText={setMeetingLocation}
       />
 
-      {/* NOTES INPUT */}
+      {/* EMERGENCY CONTACT */}
+      <TextInput
+        placeholder="Emergency Contact Number"
+        placeholderTextColor="#666"
+        style={styles.input}
+        value={emergencyContact}
+        onChangeText={setEmergencyContact}
+        keyboardType="phone-pad"
+      />
+
+      {/* NOTES */}
       <TextInput
         placeholder="Notes"
         placeholderTextColor="#666"
@@ -196,10 +371,9 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 12,
     marginBottom: 15,
-    color: '#222',
-    fontSize: 16,
     borderWidth: 1,
-    borderColor: '#D6E4F0'
+    borderColor: '#D6E4F0',
+    justifyContent: 'center'
   },
 
   notesInput: {

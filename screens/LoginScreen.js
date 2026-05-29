@@ -1,6 +1,7 @@
 // IMPORT REACT + STATE HOOK
 import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 // IMPORT UI COMPONENTS
 import {
   View,
@@ -22,6 +23,7 @@ export default function LoginScreen({ navigation }) {
   // STATES
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // LOGIN FUNCTION
   const handleLogin = () => {
@@ -37,7 +39,7 @@ export default function LoginScreen({ navigation }) {
     }
 
     axios.post(
-      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/login.php',
+      'http://192.168.0.216/eldercare-api/login.php',
 
       {
         email,
@@ -58,19 +60,33 @@ export default function LoginScreen({ navigation }) {
           }
         );
 
-      } else if (res.data.status === 'pending') {
+      }
+
+      else if (res.data.status === 'pending') {
 
         Alert.alert(
           "Pending Approval",
           "Your account is waiting for admin approval."
         );
 
-      } else {
+      }
+
+      else if (res.data.status === 'rejected') {
+
+        Alert.alert(
+          "Application Rejected",
+          "Unfortunately, your account did not meet the requirements for approval. Please contact the administrator or submit a new application."
+        );
+
+      }
+
+      else {
 
         Alert.alert(
           "Login Failed",
           "Invalid email or password"
         );
+
       }
 
     })
@@ -142,14 +158,30 @@ export default function LoginScreen({ navigation }) {
         />
 
         {/* PASSWORD */}
-        <TextInput
-          placeholder="Enter Password"
-          placeholderTextColor="#999"
-          secureTextEntry
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-        />
+        <View style={styles.passwordContainer}>
+
+          <TextInput
+            placeholder="Enter Password"
+            placeholderTextColor="#999"
+            secureTextEntry={!showPassword}
+            style={styles.passwordInput}
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+          >
+
+            <Ionicons
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={24}
+              color="#666"
+            />
+
+          </TouchableOpacity>
+
+        </View>
 
         {/* LOGIN BUTTON */}
         <TouchableOpacity
@@ -262,6 +294,22 @@ const styles = StyleSheet.create({
     color: '#4A90E2',
     fontSize: 16,
     fontWeight: '600'
-  }
+  },
+
+  passwordContainer: {
+    backgroundColor: '#F5F7FA',
+    borderRadius: 16,
+    marginBottom: 18,
+    paddingHorizontal: 18,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+
+  passwordInput: {
+    flex: 1,
+    paddingVertical: 18,
+    fontSize: 16,
+    color: '#333'
+  },
 
 });

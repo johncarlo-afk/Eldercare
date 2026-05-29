@@ -16,6 +16,8 @@ import {
   StatusBar
 } from 'react-native';
 
+import { Picker } from '@react-native-picker/picker';
+
 // IMPORT SWIPER
 import Swiper from 'react-native-deck-swiper';
 
@@ -36,13 +38,21 @@ export default function SwipeScreen({
 
   const [matches, setMatches] = useState([]);
 
+  // GENDER FILTER
+  const [genderFilter, setGenderFilter] =
+    useState('All');
+
+  // ALL USERS STORAGE
+  const [allUsers, setAllUsers] =
+    useState([]);
+
   const swiperRef = useRef(null);
 
   // LOAD USERS
   useEffect(() => {
 
     axios.get(
-      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/get_users.php'
+      'http://192.168.0.216/eldercare-api/get_users.php'
     )
 
     .then(res => {
@@ -51,28 +61,52 @@ export default function SwipeScreen({
 
       const filtered = res.data.filter(u => {
 
+        // REMOVE CURRENT USER
         if (u.id == currentUser.id) {
           return false;
         }
 
+        // SENIOR CAN SEE:
+        // CAREGIVER + VOLUNTEER
         if (currentUser.role === 'Senior') {
 
-          return (
-            u.role === 'Caregiver' ||
-            u.role === 'Volunteer'
-          );
+          if (
+            u.role !== 'Caregiver' &&
+            u.role !== 'Volunteer'
+          ) {
+            return false;
+          }
         }
 
-        return u.role === 'Senior';
+        // CAREGIVER/VOLUNTEER
+        // CAN SEE SENIORS
+        else {
+
+          if (u.role !== 'Senior') {
+            return false;
+          }
+        }
+
+        // GENDER FILTER
+        if (
+          genderFilter !== 'All' &&
+          u.gender !== genderFilter
+        ) {
+          return false;
+        }
+
+        return true;
       });
 
       setUsers(filtered);
+
+      setAllUsers(res.data);
 
     })
 
     .catch(err => console.log(err));
 
-  }, []);
+  }, [genderFilter]);
 
   // LIKE
   const handleSwipeRight = (index) => {
@@ -82,7 +116,7 @@ export default function SwipeScreen({
     if (!selectedUser) return;
 
     axios.post(
-      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/swipe.php',
+      'http://192.168.0.216/eldercare-api/swipe.php',
 
       {
         swiper_id: currentUser.id,
@@ -153,6 +187,43 @@ export default function SwipeScreen({
         <Text style={styles.matchText}>
           ❤️ Matches: {matches.length}
         </Text>
+
+      </View>
+
+      {/* FILTER */}
+      <View style={styles.filterContainer}>
+
+        <Text style={styles.filterLabel}>
+          Filter Gender
+        </Text>
+
+        <View style={styles.pickerContainer}>
+
+          <Picker
+            selectedValue={genderFilter}
+            onValueChange={(value) =>
+              setGenderFilter(value)
+            }
+          >
+
+            <Picker.Item
+              label="All"
+              value="All"
+            />
+
+            <Picker.Item
+              label="Male"
+              value="Male"
+            />
+
+            <Picker.Item
+              label="Female"
+              value="Female"
+            />
+
+          </Picker>
+
+        </View>
 
       </View>
 
@@ -304,7 +375,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    marginTop: 80,
+    marginTop: 30,
     alignItems: 'center'
   },
 
@@ -319,6 +390,24 @@ const styles = StyleSheet.create({
     color: '#FF5A7A',
     fontWeight: 'bold',
     fontSize: 16
+  },
+
+  filterContainer: {
+    marginTop: -15,
+    paddingHorizontal: 20
+  },
+
+  filterLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1E3A5F',
+    marginBottom: 8
+  },
+
+  pickerContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    overflow: 'hidden'
   },
 
   swiperContainer: {

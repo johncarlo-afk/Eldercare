@@ -3,139 +3,125 @@ import React, { useState } from 'react';
 
 // IMPORT REACT NATIVE COMPONENTS
 import {
-  View,              // CONTAINER VIEW
-  Text,              // DISPLAY TEXT
-  StyleSheet,        // CREATE STYLES
-  TextInput,         // INPUT FIELD
-  TouchableOpacity, // CLICKABLE BUTTON
-  Image,             // DISPLAY IMAGE
-  Alert,             // SHOW POPUP ALERT
-  ScrollView         // ALLOW SCROLLING
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Alert,
+  ScrollView
 } from 'react-native';
 
-// IMPORT IMAGE PICKER FOR SELECTING IMAGES FROM GALLERY
+// IMPORT IMAGE PICKER
 import * as ImagePicker from 'expo-image-picker';
 
-// IMPORT AXIOS FOR API REQUESTS
+// IMPORT AXIOS
 import axios from 'axios';
 
-// IMPORT FOR IMAGE FORM DATA UPLOAD
+// IMPORT FORM DATA
 import FormData from 'form-data';
 
 // EXPORT PROFILE SCREEN COMPONENT
 export default function ProfileScreen({ route }) {
 
-  // GET LOGGED-IN USER DATA FROM NAVIGATION
+  // GET USER DATA
   const { user } = route.params;
 
-  // STORE USER NAME
+  // STATES
   const [name, setName] = useState(user.name);
 
-  // STORE USER ROLE
   const [role, setRole] = useState(user.role);
 
-  // STORE USER AGE
   const [age, setAge] = useState(
     user.age ? String(user.age) : ''
   );
 
-  // STORE USER LOCATION
   const [location, setLocation] = useState(
     user.location || ''
   );
 
-  // STORE USER PROFILE IMAGE
   const [image, setImage] = useState(
     user.image || ''
   );
 
-  // STORE USER BIO
   const [bio, setBio] = useState(
     user.bio || ''
   );
 
-  // DISABLE EDITING IF USER ROLE IS SENIOR
-  const isEditable = user.role !== 'Senior';
+  // GENDER
+  const [gender, setGender] = useState(
+    user.gender || ''
+  );
 
-  // FUNCTION TO PICK IMAGE AND UPLOAD IT
+  // BIRTH DATE
+  const [birthDate, setBirthDate] = useState(
+    user.birth_date || ''
+  );
+
+  // PICK IMAGE
   const pickImage = async () => {
 
-    // OPEN PHONE GALLERY
-    let result = await ImagePicker.launchImageLibraryAsync({
+    let result =
+      await ImagePicker.launchImageLibraryAsync({
 
-      // ALLOW IMAGE FILES ONLY
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes:
+          ImagePicker.MediaTypeOptions.Images,
 
-      // ALLOW USER TO CROP IMAGE
-      allowsEditing: true,
+        allowsEditing: true,
 
-      // IMAGE RATIO 1:1
-      aspect: [1, 1],
+        aspect: [1, 1],
 
-      // IMAGE QUALITY
-      quality: 1
+        quality: 1
+      });
 
-    });
-
-    // CHECK IF USER DID NOT CANCEL
     if (!result.canceled) {
 
-      // GET SELECTED IMAGE
-      const selectedImage = result.assets[0];
+      const selectedImage =
+        result.assets[0];
 
-      // UPDATE IMAGE PREVIEW IMMEDIATELY
       setImage(selectedImage.uri);
 
-      // CREATE FORM DATA FOR IMAGE UPLOAD
       const formData = new FormData();
 
-      // SEND USER ID TO SERVER
-      formData.append('user_id', user.id);
+      formData.append(
+        'user_id',
+        user.id
+      );
 
-      // APPEND IMAGE FILE
       formData.append('image', {
 
-        // IMAGE FILE LOCATION
         uri: selectedImage.uri,
-
-        // IMAGE FILE NAME
         name: 'profile.jpg',
-
-        // IMAGE FILE TYPE
         type: 'image/jpeg'
 
       });
 
-      // SEND IMAGE TO PHP SERVER
       axios.post(
+        'http://192.168.0.216/eldercare-api/upload_image.php',
 
-        // PHP API URL
-        'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/upload_image.php',
-
-        // SEND FORM DATA
         formData,
 
-        // REQUEST HEADERS
         {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type':
+              'multipart/form-data'
           }
         }
-
       )
 
-      // IF UPLOAD SUCCESS
       .then(res => {
 
-        // DISPLAY SERVER RESPONSE
-        console.log("UPLOAD RESPONSE:", res.data);
+        console.log(
+          "UPLOAD RESPONSE:",
+          res.data
+        );
 
-        // UPDATE IMAGE USING SERVER URL
         if (res.data.image) {
+
           setImage(res.data.image);
         }
 
-        // SHOW SUCCESS ALERT
         Alert.alert(
           "Success",
           "Profile image updated!"
@@ -143,13 +129,13 @@ export default function ProfileScreen({ route }) {
 
       })
 
-      // IF UPLOAD FAILED
       .catch(err => {
 
-        // DISPLAY ERROR IN CONSOLE
-        console.log("UPLOAD ERROR:", err);
+        console.log(
+          "UPLOAD ERROR:",
+          err
+        );
 
-        // SHOW ERROR ALERT
         Alert.alert(
           "Error",
           "Image upload failed"
@@ -158,31 +144,25 @@ export default function ProfileScreen({ route }) {
     }
   };
 
-  // FUNCTION TO UPDATE PROFILE
+  // UPDATE PROFILE
   const handleUpdate = () => {
 
-    // SEND UPDATED DATA TO SERVER
     axios.post(
+      'http://192.168.0.216/eldercare-api/update_profile.php',
 
-      // PHP API URL
-      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/update_profile.php',
-
-      // DATA TO SEND
       {
-        id: user.id,                 // USER ID
-        name,                        // USER NAME
-        role,                        // USER ROLE
-        image,                       // PROFILE IMAGE
-        bio,                         // USER BIO
-        age: parseInt(age) || 0,     // USER AGE
-        location                     // USER LOCATION
+        id: user.id,
+        name,
+        role,
+        image,
+        bio,
+        age: parseInt(age) || 0,
+        location
       }
     )
 
-    // IF UPDATE SUCCESS
     .then(() => {
 
-      // SHOW SUCCESS MESSAGE
       Alert.alert(
         "Success",
         "Profile updated!"
@@ -190,118 +170,153 @@ export default function ProfileScreen({ route }) {
 
     })
 
-    // IF UPDATE FAILED
     .catch(err => {
 
-      // SHOW ERROR IN CONSOLE
       console.log(err);
 
     });
   };
 
-  // SCREEN UI
   return (
 
-    // SCROLLABLE SCREEN
     <ScrollView
       contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
     >
 
-      {/* SCREEN TITLE */}
+      {/* TITLE */}
       <Text style={styles.title}>
         My Profile
       </Text>
 
-      {/* DISPLAY PROFILE IMAGE */}
+      {/* PROFILE IMAGE */}
       <Image
         source={{
-          uri: image || 'https://via.placeholder.com/150'
+          uri:
+            image ||
+            'https://via.placeholder.com/150'
         }}
+
         style={styles.avatar}
       />
 
-      {/* BUTTON TO PICK IMAGE */}
+      {/* CHANGE PHOTO */}
       <TouchableOpacity
         style={styles.uploadButton}
         onPress={pickImage}
       >
 
-        {/* BUTTON TEXT */}
         <Text style={styles.uploadText}>
           Change Profile Picture
         </Text>
 
       </TouchableOpacity>
 
-      {/* NAME INPUT */}
+      {/* NAME */}
+      <Text style={styles.label}>
+        Name
+      </Text>
+
       <TextInput
         style={styles.input}
         value={name}
         onChangeText={setName}
-        editable={isEditable}
-        placeholder="Name"
+        editable={true}
       />
 
-      {/* ROLE INPUT */}
+      {/* ROLE */}
+      <Text style={styles.label}>
+        Role
+      </Text>
+
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          styles.disabledInput
+        ]}
+
         value={role}
+
         editable={false}
       />
 
-      {/* AGE INPUT */}
+      {/* GENDER */}
+      <Text style={styles.label}>
+        Gender
+      </Text>
+
+      <TextInput
+        style={[
+          styles.input,
+          styles.disabledInput
+        ]}
+
+        value={gender}
+
+        editable={false}
+      />
+
+      {/* BIRTH DATE */}
+      <Text style={styles.label}>
+        Birth Date
+      </Text>
+
+      <TextInput
+        style={[
+          styles.input,
+          styles.disabledInput
+        ]}
+
+        value={birthDate}
+
+        editable={false}
+      />
+
+      {/* AGE */}
+      <Text style={styles.label}>
+        Age
+      </Text>
+
       <TextInput
         style={styles.input}
         value={age}
         onChangeText={setAge}
-        placeholder="Age"
         keyboardType="numeric"
-        editable={isEditable}
+        editable={true}
       />
 
-      {/* LOCATION INPUT */}
+      {/* LOCATION */}
+      <Text style={styles.label}>
+        Location
+      </Text>
+
       <TextInput
         style={styles.input}
         value={location}
         onChangeText={setLocation}
-        placeholder="Location"
-        editable={isEditable}
+        editable={true}
       />
 
-      {/* BIO INPUT */}
+      {/* BIO */}
+      <Text style={styles.label}>
+        Bio
+      </Text>
+
       <TextInput
         style={styles.bioInput}
         value={bio}
         onChangeText={setBio}
-        placeholder="Write something about you..."
         multiline
-        editable={isEditable}
+        editable={true}
       />
 
-      {/* UPDATE PROFILE BUTTON */}
+      {/* UPDATE BUTTON */}
       <TouchableOpacity
-        style={[
-          styles.button,
-
-          // CHANGE BUTTON COLOR IF DISABLED
-          !isEditable && { backgroundColor: '#ccc' }
-        ]}
-
-        // RUN UPDATE FUNCTION
+        style={styles.button}
         onPress={handleUpdate}
-
-        // DISABLE BUTTON IF USER CANNOT EDIT
-        disabled={!isEditable}
       >
 
-        {/* BUTTON LABEL */}
         <Text style={styles.buttonText}>
-
-          {isEditable
-            ? "Update Profile"
-            : "Editing Disabled"}
-
+          Update Profile
         </Text>
 
       </TouchableOpacity>
@@ -310,17 +325,15 @@ export default function ProfileScreen({ route }) {
   );
 }
 
-// SCREEN STYLES
+// STYLES
 const styles = StyleSheet.create({
 
-  // MAIN CONTAINER STYLE
   container: {
     flexGrow: 1,
     padding: 20,
     backgroundColor: '#F5F7FA'
   },
 
-  // TITLE STYLE
   title: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -329,7 +342,6 @@ const styles = StyleSheet.create({
     marginTop: 30
   },
 
-  // PROFILE IMAGE STYLE
   avatar: {
     width: 140,
     height: 140,
@@ -338,7 +350,6 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
 
-  // UPLOAD BUTTON STYLE
   uploadButton: {
     backgroundColor: '#2196F3',
     padding: 12,
@@ -347,32 +358,41 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
 
-  // UPLOAD BUTTON TEXT STYLE
   uploadText: {
     color: '#fff',
     fontWeight: 'bold'
   },
 
-  
-  // INPUT FIELD STYLE
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 5,
+    marginLeft: 4
+  },
+
   input: {
     backgroundColor: '#fff',
     padding: 14,
     borderRadius: 12,
-    marginBottom: 14
+    marginBottom: 14,
+    color: '#000'
   },
 
-  // BIO INPUT STYLE
+  disabledInput: {
+    backgroundColor: '#E5E5E5'
+  },
+
   bioInput: {
     backgroundColor: '#fff',
     padding: 14,
     borderRadius: 12,
     marginBottom: 14,
     height: 100,
-    textAlignVertical: 'top'
+    textAlignVertical: 'top',
+    color: '#000'
   },
 
-  // BUTTON STYLE
   button: {
     backgroundColor: '#2196F3',
     padding: 16,
@@ -380,7 +400,6 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
 
-  // BUTTON TEXT STYLE
   buttonText: {
     color: '#fff',
     textAlign: 'center',

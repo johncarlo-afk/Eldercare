@@ -31,7 +31,7 @@ export default function ScheduleListScreen({ route }) {
   useEffect(() => {
 
     axios.get(
-      `https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/get_schedules.php?user_id=${user.id}`
+      `http://192.168.0.216/eldercare-api/get_schedules.php?user_id=${user.id}`
     )
 
     .then(res => {
@@ -65,7 +65,7 @@ export default function ScheduleListScreen({ route }) {
 
     axios.post(
 
-      'https://lightcoral-armadillo-536796.hostingersite.com/eldercare-api/update_schedule_status.php',
+      'http://192.168.0.216/eldercare-api/update_schedule_status.php',
 
       {
         schedule_id: scheduleId,
@@ -183,6 +183,11 @@ export default function ScheduleListScreen({ route }) {
               {/* LOCATION */}
               <Text style={styles.info}>
                 📍 {item.meeting_location}
+              </Text>
+
+              {/* EMERGENCY CONTACT */}
+              <Text style={styles.info}>
+                📞 {item.emergency_contact}
               </Text>
 
               {/* STATUS */}
