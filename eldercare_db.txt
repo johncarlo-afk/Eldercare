@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 31, 2026 at 02:52 PM
+-- Generation Time: Jun 15, 2026 at 11:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -57,6 +57,26 @@ CREATE TABLE `contact_messages` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `email_otps`
+--
+
+CREATE TABLE `email_otps` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `otp` varchar(10) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `email_otps`
+--
+
+INSERT INTO `email_otps` (`id`, `email`, `otp`, `created_at`) VALUES
+(5, 'joestart101@gmail.com', '155635', '2026-06-14 11:04:57');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `matches`
 --
 
@@ -71,14 +91,54 @@ CREATE TABLE `matches` (
 --
 
 INSERT INTO `matches` (`id`, `user1_id`, `user2_id`) VALUES
-(156, 52, 50),
-(157, 52, 50),
-(158, 52, 56),
-(159, 55, 50),
-(160, 55, 50),
-(161, 55, 56),
-(162, 55, 58),
-(163, 55, 50);
+(226, 69, 65),
+(227, 69, 65),
+(228, 65, 69),
+(229, 65, 79),
+(230, 79, 65);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `sender_id`, `receiver_id`, `message`, `created_at`) VALUES
+(22, 69, 69, 'hello', '2026-06-14 15:35:46'),
+(23, 69, 69, 'hahahahha', '2026-06-14 15:35:53'),
+(24, 65, 69, 'hshhshe', '2026-06-14 15:36:42'),
+(25, 65, 69, 'hello', '2026-06-14 15:44:56'),
+(26, 69, 69, 'last', '2026-06-14 15:46:59'),
+(27, 69, 69, 'hello', '2026-06-14 15:50:37'),
+(28, 69, 69, 'hello', '2026-06-14 15:52:52'),
+(29, 69, 69, 'hello', '2026-06-14 15:56:09'),
+(30, 69, 69, 'ffff', '2026-06-14 15:57:37'),
+(31, 69, 69, 'hi', '2026-06-14 15:57:55'),
+(32, 69, 69, 'g', '2026-06-14 15:59:48'),
+(33, 69, 69, 'gggg', '2026-06-14 16:00:05'),
+(34, 65, 69, 'giii', '2026-06-14 16:01:26'),
+(35, 69, 65, 'hello', '2026-06-14 16:02:32'),
+(36, 69, 65, 'hehehe', '2026-06-14 16:02:37'),
+(37, 69, 65, 'pogi', '2026-06-14 16:03:09'),
+(38, 65, 69, 'working ', '2026-06-14 16:03:38'),
+(39, 65, 79, 'Where u at?', '2026-06-15 08:44:29'),
+(40, 65, 79, 'HAHAHAHHAAH', '2026-06-15 08:46:15'),
+(41, 65, 79, 'HAHAHAHHAHAHAHA', '2026-06-15 08:46:18'),
+(42, 65, 79, 'HAHAHAHHAHAHA', '2026-06-15 08:46:25'),
+(43, 79, 65, 'HAHAHHAAHHAHA', '2026-06-15 08:46:56'),
+(44, 79, 65, 'HAHAHHAAHHAHA', '2026-06-15 08:46:59');
 
 -- --------------------------------------------------------
 
@@ -99,8 +159,32 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `user_id`, `message`, `is_read`, `created_at`) VALUES
-(30, 52, 'Your schedule was Approved', 0, '2026-05-29 17:46:40'),
-(31, 52, 'Your schedule was Approved', 0, '2026-05-29 18:16:30');
+(48, 79, 'Your schedule was Approved', 0, '2026-06-15 08:41:18'),
+(49, 79, 'Your schedule was Completed', 0, '2026-06-15 08:42:38');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ratings`
+--
+
+CREATE TABLE `ratings` (
+  `id` int(11) NOT NULL,
+  `schedule_id` int(11) NOT NULL,
+  `reviewer_id` int(11) NOT NULL,
+  `reviewed_user_id` int(11) NOT NULL,
+  `rating` int(11) DEFAULT 0,
+  `liked` tinyint(1) DEFAULT 0,
+  `feedback` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ratings`
+--
+
+INSERT INTO `ratings` (`id`, `schedule_id`, `reviewer_id`, `reviewed_user_id`, `rating`, `liked`, `feedback`, `created_at`) VALUES
+(25, 50, 65, 79, 5, 1, 'good', '2026-06-15 08:43:47');
 
 -- --------------------------------------------------------
 
@@ -117,7 +201,7 @@ CREATE TABLE `schedules` (
   `meeting_location` varchar(255) DEFAULT NULL,
   `emergency_contact` varchar(20) DEFAULT NULL,
   `notes` text DEFAULT NULL,
-  `status` enum('pending','approved','completed','cancelled') DEFAULT 'pending',
+  `status` enum('Pending','Approved','Completed','Cancelled') DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `created_by` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -127,8 +211,8 @@ CREATE TABLE `schedules` (
 --
 
 INSERT INTO `schedules` (`id`, `senior_id`, `partner_id`, `meeting_date`, `meeting_time`, `meeting_location`, `emergency_contact`, `notes`, `status`, `created_at`, `created_by`) VALUES
-(36, 52, 50, '2026-05-30', '11:54 AM', 'Main Building ', '09123456489', 'I want ice cream ', 'approved', '2026-05-29 17:45:07', 52),
-(37, 52, 56, '2026-05-30', '11:00 AM', 'Main Building ', '0912345678', 'I want drinks ', 'approved', '2026-05-29 18:15:53', 52);
+(49, 65, 69, '2026-06-15', '10:00 AM', 'Harap school ', '09123456789', 'I love drinks', 'Pending', '2026-06-14 15:27:03', 69),
+(50, 65, 79, '2026-06-16', '9:00 AM', 'SM Downtown ', '09123456489', 'I want coffee ', 'Completed', '2026-06-15 08:39:46', 79);
 
 -- --------------------------------------------------------
 
@@ -148,43 +232,20 @@ CREATE TABLE `swipes` (
 --
 
 INSERT INTO `swipes` (`id`, `swiper_id`, `swiped_id`, `action`) VALUES
-(319, 50, 52, 'like'),
-(320, 50, 52, 'like'),
-(321, 50, 55, 'like'),
-(322, 52, 50, 'like'),
-(323, 56, 52, 'like'),
-(324, 56, 55, 'like'),
-(325, 52, 50, 'like'),
-(326, 52, 51, 'like'),
-(327, 52, 53, 'like'),
-(328, 52, 54, 'like'),
-(329, 52, 56, 'like'),
-(330, 58, 52, 'like'),
-(331, 58, 55, 'like'),
-(332, 58, 57, 'like'),
-(333, 58, 52, 'like'),
-(334, 58, 55, 'like'),
-(335, 58, 57, 'like'),
-(336, 58, 52, 'like'),
-(337, 58, 55, 'like'),
-(338, 58, 52, 'like'),
-(339, 58, 55, 'like'),
-(340, 58, 57, 'like'),
-(341, 58, 52, 'like'),
-(342, 58, 55, 'like'),
-(343, 58, 57, 'like'),
-(344, 58, 57, 'like'),
-(345, 55, 50, 'like'),
-(346, 55, 51, 'like'),
-(347, 55, 53, 'like'),
-(348, 55, 50, 'like'),
-(349, 55, 51, 'like'),
-(350, 55, 53, 'like'),
-(351, 55, 54, 'like'),
-(352, 55, 56, 'like'),
-(353, 55, 58, 'like'),
-(354, 55, 50, 'like'),
-(355, 55, 51, 'like');
+(565, 79, 65, 'like'),
+(566, 65, 69, 'like'),
+(567, 65, 73, 'like'),
+(568, 65, 66, 'like'),
+(569, 65, 68, 'like'),
+(570, 65, 69, 'like'),
+(571, 65, 73, 'like'),
+(572, 69, 65, 'like'),
+(573, 69, 65, 'like'),
+(574, 79, 65, 'like'),
+(575, 65, 69, 'like'),
+(576, 65, 73, 'like'),
+(577, 65, 79, 'like'),
+(578, 79, 65, 'like');
 
 -- --------------------------------------------------------
 
@@ -201,28 +262,47 @@ CREATE TABLE `users` (
   `location` varchar(100) DEFAULT NULL,
   `bio` text DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
-  `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
+  `status` enum('Pending','Approved','Rejected','Suspended','Deactivated') NOT NULL DEFAULT 'Pending',
   `gender` varchar(20) DEFAULT NULL,
   `birth_date` date DEFAULT NULL,
   `valid_id` varchar(255) DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `senior_condition` varchar(255) DEFAULT NULL,
+  `emergency_contact` varchar(100) DEFAULT NULL,
+  `medication` varchar(255) DEFAULT NULL,
+  `caregiver_experience` varchar(100) DEFAULT NULL,
+  `caregiver_specialization` varchar(255) DEFAULT NULL,
+  `caregiver_certificate` varchar(255) DEFAULT NULL,
+  `volunteer_height` varchar(50) DEFAULT NULL,
+  `volunteer_weight` varchar(50) DEFAULT NULL,
+  `volunteer_skills` varchar(255) DEFAULT NULL,
+  `volunteer_availability` varchar(255) DEFAULT NULL,
+  `total_ratings` int(11) DEFAULT 0,
+  `average_rating` decimal(2,1) DEFAULT 0.0,
+  `reject_reason` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `location`, `bio`, `image`, `status`, `gender`, `birth_date`, `valid_id`, `deleted`, `created_at`) VALUES
-(50, 'mona', 'mona@gmail.com', 'mona123', 'Volunteer', 'San Diego ', 'mona', 'http://192.168.0.216/eldercare-api/uploads/1780076229_profile.jpg', 'Approved', 'Female', '2002-05-29', 'http://192.168.0.216/eldercare-api/uploads/1780076229_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(51, 'ehey', 'ehey@gmail.com', 'ehey123', 'Volunteer', 'San Antonio ', 'ehey', 'http://192.168.0.216/eldercare-api/uploads/1780076287_profile.jpg', 'Pending', 'Male', '2000-05-29', 'http://192.168.0.216/eldercare-api/uploads/1780076287_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(52, 'taper fade ', 'taper@gmail.com', 'taper123', 'Senior', 'San Francisco Sandwich ', 'taper fade ', 'http://192.168.0.216/eldercare-api/uploads/1780076344_profile.jpg', 'Approved', '', '0000-00-00', 'http://192.168.0.216/eldercare-api/uploads/1780076344_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(53, 'fubuki ', 'fubuki@gmail.com', 'fubuki123', 'Caregiver', 'San Francisco ', 'fubuki', 'http://192.168.0.216/eldercare-api/uploads/1780076422_profile.jpg', 'Approved', 'Female', '1997-05-12', 'http://192.168.0.216/eldercare-api/uploads/1780076422_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(54, 'rock', 'rock@gmail.com', 'rock123', 'Caregiver', 'San Antonio ', 'rock', 'http://192.168.0.216/eldercare-api/uploads/1780076505_profile.jpg', 'Pending', 'Male', '1970-05-10', 'http://192.168.0.216/eldercare-api/uploads/1780076505_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(55, 'sheesh', 'sheesh@gmail.com', 'sheesh123', 'Senior', 'San Diego ', 'sheesh ', 'http://192.168.0.216/eldercare-api/uploads/1780076582_profile.jpg', 'Approved', 'Female', '1969-05-11', 'http://192.168.0.216/eldercare-api/uploads/1780076582_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(56, 'knight ', 'knight@gmail.com', 'knight123', 'Volunteer', 'San Francisco ', 'knight ', 'http://192.168.0.216/eldercare-api/uploads/1780078418_profile.jpg', 'Approved', 'Male', '2002-05-29', 'http://192.168.0.216/eldercare-api/uploads/1780078418_valid_valid_id.jpg', 0, '2026-05-29 18:13:39'),
-(57, 'boat', 'boat@gmail.com', 'boat123', 'Senior', 'San Francisco ', 'boat', 'http://192.168.0.216/eldercare-api/uploads/1780078726_profile.jpg', 'Rejected', 'Male', '1935-05-12', 'http://192.168.0.216/eldercare-api/uploads/1780078726_valid_valid_id.jpg', 1, '2026-05-29 18:18:46'),
-(58, 'alone', 'alone@gmail.com', 'alone123', 'Volunteer', 'San Antonio ', 'alone', 'http://192.168.0.216/eldercare-api/uploads/1780230212_profile.jpg', 'Approved', 'Male', '2003-05-31', 'http://192.168.0.216/eldercare-api/uploads/1780230212_valid_valid_id.jpg', 0, '2026-05-31 12:23:32');
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `location`, `bio`, `image`, `status`, `gender`, `birth_date`, `valid_id`, `deleted`, `created_at`, `senior_condition`, `emergency_contact`, `medication`, `caregiver_experience`, `caregiver_specialization`, `caregiver_certificate`, `volunteer_height`, `volunteer_weight`, `volunteer_skills`, `volunteer_availability`, `total_ratings`, `average_rating`, `reject_reason`) VALUES
+(65, 'SpongeBob SquarePants ', 'spongebob@gmail.com', 'spongebob123', 'Senior', 'San Fernando ', 'i love myself', 'http://192.168.0.216/eldercare-api/uploads/1780838857_profile.jpg', 'Approved', 'Male', '1959-06-23', 'http://192.168.0.216/eldercare-api/uploads/1780838857_valid_valid_id.jpg', 0, '2026-06-07 13:27:37', 'sakit sa puso', '09123456789', 'pain reliever ', '', '', '', '', '', '', '', 0, 0.0, NULL),
+(66, 'Peter Griffin', 'peter@gmail.com', 'peter123', 'Volunteer', 'San Diego ', 'i love kids', 'http://192.168.0.216/eldercare-api/uploads/1780842170_profile.jpg', 'Approved', 'Female', '2003-06-16', 'http://192.168.0.216/eldercare-api/uploads/1780842170_valid_valid_id.jpg', 0, '2026-06-07 14:22:50', '', '', '', '', '', '', '169', '45kg', 'communication ', 'weekends ', 0, 0.0, NULL),
+(68, 'lonely', 'lonely@gmail.com', 'lonely123', 'Volunteer', 'San Fernando, Pampanga', 'alone', 'http://192.168.0.216/eldercare-api/uploads/1780942402_profile.jpg', 'Approved', 'Male', '2002-06-17', 'http://192.168.0.216/eldercare-api/uploads/1780942402_valid_valid_id.jpg', 0, '2026-06-08 18:13:23', '', '', '', '', '', '', '5\'6\"', '65kg', 'First Aid', 'Weekends', 0, 0.0, NULL),
+(69, 'kraby', 'kraby@gmail.com', 'kraby123', 'Caregiver', 'San Fernando, Pampanga', 'kraby', 'http://192.168.0.216/eldercare-api/uploads/1780942577_profile.jpg', 'Approved', 'Male', '1989-06-18', 'http://192.168.0.216/eldercare-api/uploads/1780942577_valid_valid_id.jpg', 0, '2026-06-08 18:16:17', '', '', '', '3 Years', 'Companion Care', 'http://192.168.0.216/eldercare-api/uploads/1780942577_certificate_caregiver_certificate.jpg', '', '', '', '', 0, 0.0, NULL),
+(70, 'Patrick Star ', 'pat@gmail.com', 'pat123', 'Senior', 'Davao City', 'pat', 'http://192.168.0.216/eldercare-api/uploads/1780942710_profile.jpg', 'Approved', 'Male', '1957-06-08', 'http://192.168.0.216/eldercare-api/uploads/1780942710_valid_valid_id.jpg', 0, '2026-06-08 18:18:30', 'Heart Disease', '0912345678', 'Paracetamol', '', '', '', '', '', '', '', 0, 0.0, NULL),
+(71, 'Patrick Star ', 'patt@gmail.com', 'pat123', 'Senior', 'Davao City', 'pat', 'http://192.168.0.216/eldercare-api/uploads/1780942973_profile_profile.jpg', 'Approved', 'Male', '1957-06-08', 'http://192.168.0.216/eldercare-api/uploads/1780942973_valid_valid_id.jpg', 0, '2026-06-08 18:22:53', 'Heart Disease', '0912345678', 'Paracetamol', '', '', '', '', '', '', '', 0, 0.0, NULL),
+(72, 'krack', 'krack@gmail.com', 'krack123', 'Volunteer', 'Las Piñas', 'krack', 'http://192.168.0.216/eldercare-api/uploads/1780943065_profile_profile.jpg', 'Approved', 'Male', '2002-06-10', 'http://192.168.0.216/eldercare-api/uploads/1780943065_valid_valid_id.jpg', 0, '2026-06-08 18:24:25', '', '', '', '', '', '', '5\'6\"', '60kg', 'First Aid', 'Weekdays', 0, 0.0, NULL),
+(73, 'SpongeBob SquarePants', 'sponge@gmail.com', 'sponge123', 'Caregiver', 'Cebu City', 'I love sponge', 'http://192.168.0.216/eldercare-api/uploads/1780943263_profile_profile.jpg', 'Approved', 'Male', '1988-06-19', 'http://192.168.0.216/eldercare-api/uploads/1780943263_valid_valid_id.jpg', 0, '2026-06-08 18:27:43', '', '', '', '3 Years', 'Care Elder', 'http://192.168.0.216/eldercare-api/uploads/1780943263_certificate_caregiver_certificate.jpg', '', '', '', '', 0, 0.0, NULL),
+(74, 'Homer J. Simpson', 'homer@gmail.com', 'homer123', 'Volunteer', 'Mexico, Pampanga', 'I love yellow ', 'http://192.168.0.216/eldercare-api/uploads/1781075994_profile.jpg', 'Approved', '', '0000-00-00', 'http://192.168.0.216/eldercare-api/uploads/1781073361_valid_valid_id.jpg', 1, '2026-06-10 06:36:01', '', '', '', '', '', '', '1699', '75kg1', 'Driving1', 'Weekends1', 0, 0.0, NULL),
+(75, 'Homer Simpson ', 'homer1@gmail.com', 'homer123', 'Volunteer', 'Mexico, Pampanga', 'yellow blue ', 'http://192.168.0.216/eldercare-api/uploads/1781076901_profile.jpg', 'Approved', 'Male', '2003-06-22', 'http://192.168.0.216/eldercare-api/uploads/1781076527_valid_valid_id.jpg', 1, '2026-06-10 07:28:47', '', '', '', '', '', '', '149', '80kg', 'First Aid kit', 'Weekdays ', 0, 0.0, NULL),
+(76, 'Sandy ', 'sandy@gmail.com', 'sandy123', 'Volunteer', 'Cebu City', 'I love nuts ', 'http://192.168.0.216/eldercare-api/uploads/1781177282_profile_profile.jpg', 'Approved', 'Female', '2003-06-16', 'http://192.168.0.216/eldercare-api/uploads/1781177282_valid_valid_id.jpg', 0, '2026-06-11 11:28:02', '', '', '', '', '', '', '162', '55kg', 'Communication', 'Weekends', 0, 0.0, NULL),
+(77, 'Sandy cheeks ', 'sandy1@gmail.com', 'sandy123', 'Volunteer', 'Taguig', 'sandy', 'http://192.168.0.216/eldercare-api/uploads/1781179273_profile_profile.jpg', 'Suspended', 'Female', '2002-06-27', 'http://192.168.0.216/eldercare-api/uploads/1781179273_valid_valid_id.jpg', 0, '2026-06-11 12:01:13', '', '', '', '', '', '', '145', '70kg', 'First Aid', 'Weekends', 0, 0.0, 'Invalid ID'),
+(78, 'shahhwab', 'sandy11@gmail.com', 'sandy123', 'Volunteer', 'Apalit, Pampanga', 'shaahah', 'http://192.168.0.216/eldercare-api/uploads/1781181552_profile_profile.jpg', 'Rejected', 'Male', '2026-06-15', 'http://192.168.0.216/eldercare-api/uploads/1781181552_valid_valid_id.jpg', 0, '2026-06-11 12:39:12', '', '', '', '', '', '', '147', '85kg', 'Exercise Assistance', 'Evening', 0, 0.0, 'Fake ID'),
+(79, 'patty ', 'joestart101@gmail.com', 'patty123', 'Volunteer', 'Taguig', 'shha', 'http://192.168.0.216/eldercare-api/uploads/1781367769_profile_profile.jpg', 'Approved', 'Male', '2003-06-21', 'http://192.168.0.216/eldercare-api/uploads/1781367769_valid_valid_id.jpg', 0, '2026-06-13 16:22:49', '', '', '', '', '', '', '144', '65kg', 'Driving', 'Morning', 0, 0.0, NULL),
+(80, 'pattt', 'diogiorno50@gmail.com', 'pattt123', 'Senior', 'Makati', 'djhdhs', 'http://192.168.0.216/eldercare-api/uploads/1781368241_profile_profile.jpg', 'Pending', 'Male', '1956-06-24', 'http://192.168.0.216/eldercare-api/uploads/1781368241_valid_valid_id.jpg', 0, '2026-06-13 16:30:41', 'Arthritis', '0912345678', 'Omeprazole', '', '', '', '', '', '', '', 0, 0.0, NULL);
 
 --
 -- Indexes for dumped tables
@@ -241,15 +321,33 @@ ALTER TABLE `contact_messages`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `email_otps`
+--
+ALTER TABLE `email_otps`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `matches`
 --
 ALTER TABLE `matches`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `ratings`
+--
+ALTER TABLE `ratings`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -287,34 +385,52 @@ ALTER TABLE `contact_messages`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT for table `email_otps`
+--
+ALTER TABLE `email_otps`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `matches`
 --
 ALTER TABLE `matches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=164;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=231;
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+
+--
+-- AUTO_INCREMENT for table `ratings`
+--
+ALTER TABLE `ratings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `schedules`
 --
 ALTER TABLE `schedules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `swipes`
 --
 ALTER TABLE `swipes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=356;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=579;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
