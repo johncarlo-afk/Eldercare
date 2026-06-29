@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2026 at 08:04 PM
+-- Generation Time: May 31, 2026 at 02:52 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -71,7 +71,14 @@ CREATE TABLE `matches` (
 --
 
 INSERT INTO `matches` (`id`, `user1_id`, `user2_id`) VALUES
-(156, 52, 50);
+(156, 52, 50),
+(157, 52, 50),
+(158, 52, 56),
+(159, 55, 50),
+(160, 55, 50),
+(161, 55, 56),
+(162, 55, 58),
+(163, 55, 50);
 
 -- --------------------------------------------------------
 
@@ -92,7 +99,8 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `user_id`, `message`, `is_read`, `created_at`) VALUES
-(30, 52, 'Your schedule was Approved', 0, '2026-05-29 17:46:40');
+(30, 52, 'Your schedule was Approved', 0, '2026-05-29 17:46:40'),
+(31, 52, 'Your schedule was Approved', 0, '2026-05-29 18:16:30');
 
 -- --------------------------------------------------------
 
@@ -119,7 +127,8 @@ CREATE TABLE `schedules` (
 --
 
 INSERT INTO `schedules` (`id`, `senior_id`, `partner_id`, `meeting_date`, `meeting_time`, `meeting_location`, `emergency_contact`, `notes`, `status`, `created_at`, `created_by`) VALUES
-(36, 52, 50, '2026-05-30', '11:54 AM', 'Main Building ', '09123456489', 'I want ice cream ', 'approved', '2026-05-29 17:45:07', 52);
+(36, 52, 50, '2026-05-30', '11:54 AM', 'Main Building ', '09123456489', 'I want ice cream ', 'approved', '2026-05-29 17:45:07', 52),
+(37, 52, 56, '2026-05-30', '11:00 AM', 'Main Building ', '0912345678', 'I want drinks ', 'approved', '2026-05-29 18:15:53', 52);
 
 -- --------------------------------------------------------
 
@@ -142,7 +151,40 @@ INSERT INTO `swipes` (`id`, `swiper_id`, `swiped_id`, `action`) VALUES
 (319, 50, 52, 'like'),
 (320, 50, 52, 'like'),
 (321, 50, 55, 'like'),
-(322, 52, 50, 'like');
+(322, 52, 50, 'like'),
+(323, 56, 52, 'like'),
+(324, 56, 55, 'like'),
+(325, 52, 50, 'like'),
+(326, 52, 51, 'like'),
+(327, 52, 53, 'like'),
+(328, 52, 54, 'like'),
+(329, 52, 56, 'like'),
+(330, 58, 52, 'like'),
+(331, 58, 55, 'like'),
+(332, 58, 57, 'like'),
+(333, 58, 52, 'like'),
+(334, 58, 55, 'like'),
+(335, 58, 57, 'like'),
+(336, 58, 52, 'like'),
+(337, 58, 55, 'like'),
+(338, 58, 52, 'like'),
+(339, 58, 55, 'like'),
+(340, 58, 57, 'like'),
+(341, 58, 52, 'like'),
+(342, 58, 55, 'like'),
+(343, 58, 57, 'like'),
+(344, 58, 57, 'like'),
+(345, 55, 50, 'like'),
+(346, 55, 51, 'like'),
+(347, 55, 53, 'like'),
+(348, 55, 50, 'like'),
+(349, 55, 51, 'like'),
+(350, 55, 53, 'like'),
+(351, 55, 54, 'like'),
+(352, 55, 56, 'like'),
+(353, 55, 58, 'like'),
+(354, 55, 50, 'like'),
+(355, 55, 51, 'like');
 
 -- --------------------------------------------------------
 
@@ -156,7 +198,6 @@ CREATE TABLE `users` (
   `email` varchar(100) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
   `role` varchar(20) DEFAULT NULL,
-  `age` int(11) DEFAULT NULL,
   `location` varchar(100) DEFAULT NULL,
   `bio` text DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
@@ -172,13 +213,16 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `age`, `location`, `bio`, `image`, `status`, `gender`, `birth_date`, `valid_id`, `deleted`, `created_at`) VALUES
-(50, 'mona', 'mona@gmail.com', 'mona123', 'Volunteer', 23, 'San Diego ', 'mona', 'http://192.168.0.216/eldercare-api/uploads/1780076229_profile.jpg', 'Approved', 'Female', '2002-05-29', 'http://192.168.0.216/eldercare-api/uploads/1780076229_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(51, 'ehey', 'ehey@gmail.com', 'ehey123', 'Volunteer', 26, 'San Antonio ', 'ehey', 'http://192.168.0.216/eldercare-api/uploads/1780076287_profile.jpg', 'Pending', 'Male', '2000-05-29', 'http://192.168.0.216/eldercare-api/uploads/1780076287_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(52, 'taper', 'taper@gmail.com', 'taper123', 'Senior', 67, 'San Francisco ', 'taper', 'http://192.168.0.216/eldercare-api/uploads/1780076344_profile.jpg', 'Approved', 'Male', '1988-05-29', 'http://192.168.0.216/eldercare-api/uploads/1780076344_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(53, 'fubuki ', 'fubuki@gmail.com', 'fubuki123', 'Caregiver', 29, 'San Francisco ', 'fubuki', 'http://192.168.0.216/eldercare-api/uploads/1780076422_profile.jpg', 'Approved', 'Female', '1997-05-12', 'http://192.168.0.216/eldercare-api/uploads/1780076422_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(54, 'rock', 'rock@gmail.com', 'rock123', 'Caregiver', 35, 'San Antonio ', 'rock', 'http://192.168.0.216/eldercare-api/uploads/1780076505_profile.jpg', 'Pending', 'Male', '1970-05-10', 'http://192.168.0.216/eldercare-api/uploads/1780076505_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
-(55, 'sheesh', 'sheesh@gmail.com', 'sheesh123', 'Senior', 69, 'San Diego ', 'sheesh ', 'http://192.168.0.216/eldercare-api/uploads/1780076582_profile.jpg', 'Pending', 'Female', '1969-05-11', 'http://192.168.0.216/eldercare-api/uploads/1780076582_valid_valid_id.jpg', 0, '2026-05-29 17:50:00');
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `location`, `bio`, `image`, `status`, `gender`, `birth_date`, `valid_id`, `deleted`, `created_at`) VALUES
+(50, 'mona', 'mona@gmail.com', 'mona123', 'Volunteer', 'San Diego ', 'mona', 'http://192.168.0.216/eldercare-api/uploads/1780076229_profile.jpg', 'Approved', 'Female', '2002-05-29', 'http://192.168.0.216/eldercare-api/uploads/1780076229_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
+(51, 'ehey', 'ehey@gmail.com', 'ehey123', 'Volunteer', 'San Antonio ', 'ehey', 'http://192.168.0.216/eldercare-api/uploads/1780076287_profile.jpg', 'Pending', 'Male', '2000-05-29', 'http://192.168.0.216/eldercare-api/uploads/1780076287_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
+(52, 'taper fade ', 'taper@gmail.com', 'taper123', 'Senior', 'San Francisco Sandwich ', 'taper fade ', 'http://192.168.0.216/eldercare-api/uploads/1780076344_profile.jpg', 'Approved', '', '0000-00-00', 'http://192.168.0.216/eldercare-api/uploads/1780076344_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
+(53, 'fubuki ', 'fubuki@gmail.com', 'fubuki123', 'Caregiver', 'San Francisco ', 'fubuki', 'http://192.168.0.216/eldercare-api/uploads/1780076422_profile.jpg', 'Approved', 'Female', '1997-05-12', 'http://192.168.0.216/eldercare-api/uploads/1780076422_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
+(54, 'rock', 'rock@gmail.com', 'rock123', 'Caregiver', 'San Antonio ', 'rock', 'http://192.168.0.216/eldercare-api/uploads/1780076505_profile.jpg', 'Pending', 'Male', '1970-05-10', 'http://192.168.0.216/eldercare-api/uploads/1780076505_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
+(55, 'sheesh', 'sheesh@gmail.com', 'sheesh123', 'Senior', 'San Diego ', 'sheesh ', 'http://192.168.0.216/eldercare-api/uploads/1780076582_profile.jpg', 'Approved', 'Female', '1969-05-11', 'http://192.168.0.216/eldercare-api/uploads/1780076582_valid_valid_id.jpg', 0, '2026-05-29 17:50:00'),
+(56, 'knight ', 'knight@gmail.com', 'knight123', 'Volunteer', 'San Francisco ', 'knight ', 'http://192.168.0.216/eldercare-api/uploads/1780078418_profile.jpg', 'Approved', 'Male', '2002-05-29', 'http://192.168.0.216/eldercare-api/uploads/1780078418_valid_valid_id.jpg', 0, '2026-05-29 18:13:39'),
+(57, 'boat', 'boat@gmail.com', 'boat123', 'Senior', 'San Francisco ', 'boat', 'http://192.168.0.216/eldercare-api/uploads/1780078726_profile.jpg', 'Rejected', 'Male', '1935-05-12', 'http://192.168.0.216/eldercare-api/uploads/1780078726_valid_valid_id.jpg', 1, '2026-05-29 18:18:46'),
+(58, 'alone', 'alone@gmail.com', 'alone123', 'Volunteer', 'San Antonio ', 'alone', 'http://192.168.0.216/eldercare-api/uploads/1780230212_profile.jpg', 'Approved', 'Male', '2003-05-31', 'http://192.168.0.216/eldercare-api/uploads/1780230212_valid_valid_id.jpg', 0, '2026-05-31 12:23:32');
 
 --
 -- Indexes for dumped tables
@@ -246,31 +290,31 @@ ALTER TABLE `contact_messages`
 -- AUTO_INCREMENT for table `matches`
 --
 ALTER TABLE `matches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=164;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `schedules`
 --
 ALTER TABLE `schedules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `swipes`
 --
 ALTER TABLE `swipes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=323;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=356;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

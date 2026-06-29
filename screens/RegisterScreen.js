@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import FormData from 'form-data';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Checkbox from 'expo-checkbox';
 // IMPORT REACT NATIVE COMPONENTS
 import {
   View,
@@ -15,7 +16,9 @@ import {
   Alert,
   ScrollView,
   ImageBackground,
-  Image
+  Image,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 
 // IMPORT AXIOS FOR API REQUESTS
@@ -29,9 +32,6 @@ export default function RegisterScreen({ navigation }) {
 
   // STORE USER NAME
   const [name, setName] = useState('');
-
-  // STORE USER AGE
-  const [age, setAge] = useState('');
 
   // STORE USER BIO
   const [bio, setBio] = useState('');
@@ -68,6 +68,273 @@ export default function RegisterScreen({ navigation }) {
   // STORE VALID ID IMAGE
   const [validId, setValidId] = useState('');
 
+  // SENIOR
+  const [seniorCondition, setSeniorCondition] =
+    useState('');
+
+  const [emergencyContact, setEmergencyContact] =
+    useState('');
+
+  const [medication, setMedication] =
+    useState('');
+
+  // CAREGIVER
+  const [caregiverExperience, setCaregiverExperience] =
+    useState('');
+  
+
+  const [caregiverSpecialization, setCaregiverSpecialization] =
+    useState('');
+
+  const [caregiverCertificate, setCaregiverCertificate] =
+    useState('');
+  
+  const [caregiverCertificateImage, setCaregiverCertificateImage] =
+  useState('');
+
+  // VOLUNTEER
+  const [volunteerHeight, setVolunteerHeight] =
+    useState('');
+
+  const [volunteerWeight, setVolunteerWeight] =
+    useState('');
+
+  const [volunteerSkills, setVolunteerSkills] =
+    useState('');
+
+  const [volunteerAvailability, setVolunteerAvailability] =
+    useState('');
+
+  // TERMS & CONDITIONS
+  const [agreeTerms, setAgreeTerms] =
+    useState(false);
+
+  const [agreeWaiver, setAgreeWaiver] =
+    useState(false);
+
+  const [otp, setOtp] = useState('');
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+
+  // PHILIPPINE ADDRESSES
+const philippinesAddresses = [
+    'Manila',
+    'Quezon City',
+    'Caloocan',
+    'Makati',
+    'Taguig',
+    'Pasig',
+    'Pasay',
+    'Muntinlupa',
+    'Cebu City',
+    'Davao City',
+    'Angeles City',
+    'San Fernando, Pampanga',
+    'Mexico, Pampanga',
+    'Apalit, Pampanga',
+    'Lubao, Pampanga',
+    'Guagua, Pampanga',
+    'Floridablanca, Pampanga',
+    'Others'
+  ];
+
+  // SENIOR CONDITIONS
+  const medicalConditions = [
+    'None',
+    'Hypertension',
+    'Diabetes',
+    'Arthritis',
+    'Asthma',
+    'Heart Disease',
+    'Stroke',
+    'Dementia',
+    'Alzheimers',
+    'Kidney Disease',
+    'Others'
+  ];
+
+  // MEDICATION OPTIONS
+  const medicationOptions = [
+    'None',
+    'Paracetamol',
+    'Losartan',
+    'Amlodipine',
+    'Metformin',
+    'Insulin',
+    'Atorvastatin',
+    'Omeprazole',
+    'Salbutamol',
+    'Aspirin',
+    'Clopidogrel',
+    'Calcium + Vitamin D',
+    'Others'
+  ];
+
+  // CAREGIVER EXPERIENCE
+  const caregiverExperienceOptions = [
+    '1 Year',
+    '2 Years',
+    '3 Years',
+    '4 Years',
+    '5 Years',
+    '6 Years',
+    '7 Years',
+    '8 Years',
+    '9 Years',
+    '10 Years',
+    '11 Years',
+    '12 Years',
+    '13 Years',
+    '14 Years',
+    '15 Years',
+    '16 Years',
+    '17 Years',
+    '18 Years',
+    '19 Years',
+    '20 Years',
+    'Others'
+  ];
+
+  // CAREGIVER SPECIALIZATION
+  const caregiverSpecializations = [
+    'Elderly Care',
+    'Dementia Care',
+    'Alzheimers Care',
+    'Bedridden Care',
+    'Post-Stroke Care',
+    'Palliative Care',
+    'Companion Care',
+    'Mobility Assistance',
+    'Medication Assistance',
+    'Wound Care',
+    'Diabetes Care',
+    'Home Care',
+    'Live-in Care',
+    'Special Needs Care',
+    'Others'
+  ];
+
+  // VOLUNTEER HEIGHT
+  const volunteerHeights = [
+    '140',
+    '141',
+    '142',
+    '143',
+    '144',
+    '145',
+    '146',
+    '147',
+    '148',
+    '149',
+    '150',
+    '151',
+    '152',
+    '153',
+    '154',
+    '155',
+    '156',
+    '157',
+    '158',
+    '159',
+    '160',
+    '161',
+    '162',
+    '163',
+    '164',
+    '165',
+    '166',
+    '167',
+    '168',
+    '169',
+    '170',
+    '171',
+    '172',
+    '173',
+    '174',
+    '175',
+    '176',
+    '177',
+    '178',
+    '179',
+    '180',
+    '181',
+    '182',
+    '183',
+    '184',
+    '185',
+    '186',
+    '187',
+    '188',
+    '189',
+    '190',
+    '191',
+    '192',
+    '193',
+    '194',
+    '195',
+    '196',
+    '197',
+    '198',
+    '199',
+    '200',
+    'Others'
+  ];
+
+  // VOLUNTEER WEIGHT
+  const volunteerWeights = [
+    '40kg',
+    '45kg',
+    '50kg',
+    '55kg',
+    '60kg',
+    '65kg',
+    '70kg',
+    '75kg',
+    '80kg',
+    '85kg',
+    '90kg',
+    '95kg',
+    '100kg',
+    'Others'
+  ];
+
+  // VOLUNTEER SKILLS
+  const volunteerSkillsOptions = [
+    'Communication',
+    'Cooking',
+    'Cleaning',
+    'First Aid',
+    'Driving',
+    'Companionship',
+    'Mobility Assistance',
+    'Technology Assistance',
+    'Exercise Assistance',
+    'Medication Reminder',
+    'Others'
+  ];
+
+  // VOLUNTEER AVAILABILITY
+  const volunteerAvailabilityOptions = [
+    'Weekdays',
+    'Weekends',
+    'Morning',
+    'Afternoon',
+    'Evening',
+    'Full Time',
+    'Part Time',
+    'Anytime'
+  ];
+
+  // OTHER INPUT STATES
+  const [otherLocation, setOtherLocation] = useState('');
+  const [otherSeniorCondition, setOtherSeniorCondition] = useState('');
+  const [otherCaregiverExperience, setOtherCaregiverExperience] = useState('');
+  const [otherCaregiverSpecialization, setOtherCaregiverSpecialization] = useState('');
+  const [otherVolunteerHeight, setOtherVolunteerHeight] = useState('');
+  const [otherVolunteerWeight, setOtherVolunteerWeight] = useState('');
+  const [otherVolunteerSkills, setOtherVolunteerSkills] = useState('');
+  const [otherMedication, setOtherMedication] = useState('');
+  
   // PICK PROFILE IMAGE
   const pickImage = async () => {
 
@@ -114,14 +381,131 @@ export default function RegisterScreen({ navigation }) {
     }
   };
 
-  // FUNCTION TO REGISTER USER
+  // PICK CAREGIVER CERTIFICATE IMAGE
+  const pickCaregiverCertificate = async () => {
+
+    let result =
+      await ImagePicker.launchImageLibraryAsync({
+
+        mediaTypes:
+          ImagePicker.MediaTypeOptions.Images,
+
+        allowsEditing: true,
+
+        quality: 1
+      });
+
+    // IF USER SELECTED IMAGE
+    if (!result.canceled) {
+
+      setCaregiverCertificateImage(
+        result.assets[0].uri
+      );
+    }
+  };
+
+  const sendOtp = async () => {
+
+    if (!email) {
+
+      Alert.alert(
+        "Error",
+        "Please enter email"
+      );
+
+      return;
+    }
+
+    try {
+
+      const res = await axios.post(
+
+        'http://192.168.0.216/eldercare-api/send_otp.php',
+
+        {
+          email: email
+        }
+
+      );
+
+      console.log(res.data);
+
+      if (res.data.status === 'exists') {
+
+        Alert.alert(
+          "Email Exists",
+          "This email is already registered"
+        );
+
+        return;
+      }
+
+      if (res.data.status === 'success') {
+
+        Alert.alert(
+          "OTP Sent",
+          "Please check your email"
+        );
+
+        setShowOtpInput(true);
+      }
+
+    } catch (err) {
+
+      Alert.alert(
+        "Error",
+        "Failed to send OTP"
+      );
+    }
+  };
+
+  const verifyOtp = async () => {
+
+    try {
+
+      const res = await axios.post(
+
+        'http://192.168.0.216/eldercare-api/verify_otp.php',
+
+        {
+          email: email,
+          otp: otp
+        }
+
+      );
+
+      if (res.data.status === 'success') {
+
+        setOtpVerified(true);
+
+        Alert.alert(
+          "Success",
+          "OTP verified successfully"
+        );
+
+      } else {
+
+        Alert.alert(
+          "Invalid OTP",
+          "Please try again"
+        );
+      }
+
+    } catch (err) {
+
+      Alert.alert(
+        "Error",
+        "OTP verification failed"
+      );
+    }
+  };
+
   // FUNCTION TO REGISTER USER
   const handleRegister = async () => {
 
     // CHECK IF THERE ARE EMPTY FIELDS
     if (
       !name ||
-      !age ||
       !bio ||
       !location ||
       !email ||
@@ -166,21 +550,329 @@ export default function RegisterScreen({ navigation }) {
       return;
     }
 
+    // SENIOR AGE VALIDATION (60 YEARS OLD ABOVE)
+    if (role === 'Senior') {
+
+      const today = new Date();
+
+      const birth = new Date(birthDate);
+
+      let age =
+        today.getFullYear() -
+        birth.getFullYear();
+
+      const monthDifference =
+        today.getMonth() -
+        birth.getMonth();
+
+      // ADJUST AGE IF BIRTHDAY NOT YET REACHED
+      if (
+        monthDifference < 0 ||
+        (
+          monthDifference === 0 &&
+          today.getDate() < birth.getDate()
+        )
+      ) {
+
+        age--;
+      }
+
+      // CHECK IF BELOW 60
+      if (age < 60) {
+
+        Alert.alert(
+          "Age Restriction",
+          "Senior accounts are only for users 60 years old and above."
+        );
+
+        return;
+      }
+    }
+
+    // SENIOR VALIDATION
+    if (
+      role === 'Senior' &&
+      (
+        !seniorCondition ||
+        !emergencyContact ||
+        !medication
+      )
+    ) {
+
+      Alert.alert(
+        "Error",
+        "Please complete senior information"
+      );
+
+      return;
+    }
+
+    // CAREGIVER VALIDATION
+    if (
+      role === 'Caregiver' &&
+      (
+        !caregiverExperience ||
+        !caregiverSpecialization ||
+        !caregiverCertificateImage
+      )
+    ) {
+
+      Alert.alert(
+        "Error",
+        "Please complete caregiver information"
+      );
+
+      return;
+    }
+
+    // VOLUNTEER VALIDATION
+    if (
+      role === 'Volunteer' &&
+      (
+        !volunteerHeight ||
+        !volunteerWeight ||
+        !volunteerSkills ||
+        !volunteerAvailability
+      )
+    ) {
+
+      Alert.alert(
+        "Error",
+        "Please complete volunteer information"
+      );
+
+      return;
+    }
+
+    // TERMS VALIDATION
+    if (!agreeTerms || !agreeWaiver) {
+
+      Alert.alert(
+        "Agreement Required",
+        "Please accept the Terms, Conditions, and Waiver."
+      );
+
+      return;
+    }
+
+    // FINAL VALUES
+    const finalLocation =
+      location === 'Others'
+        ? otherLocation
+        : location;
+
+    const finalSeniorCondition =
+      seniorCondition === 'Others'
+        ? otherSeniorCondition
+        : seniorCondition;
+
+    const finalMedication =
+      medication === 'Others'
+        ? otherMedication
+        : medication;
+
+    const finalCaregiverExperience =
+      caregiverExperience === 'Others'
+        ? otherCaregiverExperience
+        : caregiverExperience;
+
+    const finalCaregiverSpecialization =
+      caregiverSpecialization === 'Others'
+        ? otherCaregiverSpecialization
+        : caregiverSpecialization;
+
+    const finalVolunteerHeight =
+      volunteerHeight === 'Others'
+        ? otherVolunteerHeight
+        : volunteerHeight;
+
+    const finalVolunteerWeight =
+      volunteerWeight === 'Others'
+        ? otherVolunteerWeight
+        : volunteerWeight;
+
+    const finalVolunteerSkills =
+      volunteerSkills === 'Others'
+        ? otherVolunteerSkills
+        : volunteerSkills;
+
+    // VALIDATE OTHER FIELDS
+    if (
+      location === 'Others' &&
+      !otherLocation
+    ) {
+      Alert.alert(
+        "Error",
+        "Please specify your location"
+      );
+      return;
+    }
+
+    if (
+      seniorCondition === 'Others' &&
+      !otherSeniorCondition
+    ) {
+      Alert.alert(
+        "Error",
+        "Please specify medical condition"
+      );
+      return;
+    }
+
+    if (
+      medication === 'Others' &&
+      !otherMedication
+    ) {
+      Alert.alert(
+        "Error",
+        "Please specify medication"
+      );
+      return;
+    }
+
+    if (
+      caregiverExperience === 'Others' &&
+      !otherCaregiverExperience
+    ) {
+      Alert.alert(
+        "Error",
+        "Please specify experience"
+      );
+      return;
+    }
+
+    if (
+      caregiverSpecialization === 'Others' &&
+      !otherCaregiverSpecialization
+    ) {
+      Alert.alert(
+        "Error",
+        "Please specify specialization"
+      );
+      return;
+    }
+
+    if (
+      volunteerHeight === 'Others' &&
+      !otherVolunteerHeight
+    ) {
+      Alert.alert(
+        "Error",
+        "Please specify height"
+      );
+      return;
+    }
+
+    if (
+      volunteerWeight === 'Others' &&
+      !otherVolunteerWeight
+    ) {
+      Alert.alert(
+        "Error",
+        "Please specify weight"
+      );
+      return;
+    }
+
+    if (
+      volunteerSkills === 'Others' &&
+      !otherVolunteerSkills
+    ) {
+      Alert.alert(
+        "Error",
+        "Please specify skill"
+      );
+      return;
+    }
+
+    if (!otpVerified) {
+
+      Alert.alert(
+        "OTP Required",
+        "Please verify your email first"
+      );
+
+      return;
+    }
+
     try {
 
       // CREATE FORM DATA
       const formData = new FormData();
 
+
+
       // APPEND TEXT DATA
       formData.append('name', name);
-      formData.append('age', age);
       formData.append('bio', bio);
-      formData.append('location', location);
+      formData.append('location', finalLocation);
       formData.append('email', email);
       formData.append('password', password);
       formData.append('role', role);
       formData.append('gender', gender);
       formData.append('birth_date', birthDate);
+      // SENIOR
+      formData.append(
+        'senior_condition',
+        finalSeniorCondition
+      );
+
+      formData.append(
+        'emergency_contact',
+        emergencyContact
+      );
+
+      formData.append(
+        'medication',
+        finalMedication
+      );
+
+      // CAREGIVER
+      formData.append(
+        'caregiver_experience',
+        finalCaregiverExperience
+      );
+
+      formData.append(
+        'caregiver_specialization',
+        finalCaregiverSpecialization
+      );
+
+      // CAREGIVER CERTIFICATE IMAGE
+      if (
+        role === 'Caregiver' &&
+        caregiverCertificateImage
+      ) {
+
+        formData.append('caregiver_certificate', {
+
+          uri: caregiverCertificateImage,
+          name: 'caregiver_certificate.jpg',
+          type: 'image/jpeg'
+
+        });
+      }
+
+      // VOLUNTEER
+      formData.append(
+        'volunteer_height',
+        finalVolunteerHeight
+      );
+
+      formData.append(
+        'volunteer_weight',
+        finalVolunteerWeight
+      );
+
+      formData.append(
+        'volunteer_skills',
+        finalVolunteerSkills
+      );
+
+      formData.append(
+        'volunteer_availability',
+        volunteerAvailability
+      );
 
       // APPEND VALID ID IMAGE
       formData.append('valid_id', {
@@ -233,26 +925,35 @@ export default function RegisterScreen({ navigation }) {
 
         Alert.alert(
           "Success",
-          "Account created successfully!"
+          "Account created successfully!",
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate('Login')
+            }
+          ]
         );
-
-        navigation.navigate('Login');
       }
 
     } catch (err) {
 
-      console.log("REGISTER ERROR:", err);
+      console.log("REGISTER ERROR:", err.response?.data || err);
 
       Alert.alert(
         "Error",
         "Registration failed"
       );
     }
+
   };
 
   return (
 
-    <View style={{ flex: 1, backgroundColor: '#EAF4FF' }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View style={{ flex: 1, backgroundColor: '#EAF4FF' }}>
 
       {/* TOP IMAGE */}
       <ImageBackground
@@ -294,6 +995,7 @@ export default function RegisterScreen({ navigation }) {
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
 
         {/* REGISTER CARD */}
@@ -356,15 +1058,6 @@ export default function RegisterScreen({ navigation }) {
             placeholderTextColor="#666"
             style={styles.input}
             onChangeText={setName}
-          />
-
-          {/* AGE INPUT */}
-          <TextInput
-            placeholder="Age"
-            placeholderTextColor="#666"
-            keyboardType="numeric"
-            style={styles.input}
-            onChangeText={setAge}
           />
 
           {/* GENDER PICKER */}
@@ -444,13 +1137,47 @@ export default function RegisterScreen({ navigation }) {
             )
           }
 
-          {/* LOCATION INPUT */}
-          <TextInput
-            placeholder="Location"
-            placeholderTextColor="#666"
-            style={styles.input}
-            onChangeText={setLocation}
-          />
+          {/* LOCATION PICKER */}
+          <View style={styles.pickerContainer}>
+
+            <Picker
+              selectedValue={location}
+              style={styles.picker}
+              onValueChange={(itemValue) =>
+                setLocation(itemValue)
+              }
+            >
+
+              <Picker.Item
+                label="Select Philippine Address"
+                value=""
+              />
+
+              {
+                philippinesAddresses.map((item, index) => (
+                  <Picker.Item
+                    key={index}
+                    label={item}
+                    value={item}
+                  />
+                ))
+              }
+
+            </Picker>
+
+          </View>
+
+          {
+            location === 'Others' && (
+              <TextInput
+                placeholder="Enter Address"
+                placeholderTextColor="#666"
+                style={styles.input}
+                value={otherLocation}
+                onChangeText={setOtherLocation}
+              />
+            )
+          }
 
           {/* EMAIL INPUT */}
           <TextInput
@@ -461,6 +1188,47 @@ export default function RegisterScreen({ navigation }) {
             autoCapitalize="none"
             onChangeText={setEmail}
           />
+
+          {/* SEND OTP BUTTON */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={sendOtp}
+          >
+
+            <Text style={styles.buttonText}>
+              Send OTP
+            </Text>
+
+          </TouchableOpacity>
+
+          {
+            showOtpInput && (
+
+              <>
+              
+                <TextInput
+                  placeholder="Enter OTP"
+                  placeholderTextColor="#666"
+                  style={styles.input}
+                  keyboardType="number-pad"
+                  value={otp}
+                  onChangeText={setOtp}
+                />
+
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={verifyOtp}
+                >
+
+                  <Text style={styles.buttonText}>
+                    Verify OTP
+                  </Text>
+
+                </TouchableOpacity>
+
+              </>
+            )
+          }
 
           {/* PASSWORD INPUT */}
           <View style={styles.passwordContainer}>
@@ -529,6 +1297,441 @@ export default function RegisterScreen({ navigation }) {
 
           </View>
 
+          {/* SENIOR FIELDS */}
+          {
+            role === 'Senior' && (
+              <>
+
+                <TextInput
+                  placeholder="Emergency Contact"
+                  placeholderTextColor="#666"
+                  keyboardType="phone-pad"
+                  style={styles.input}
+                  onChangeText={setEmergencyContact}
+                />
+
+                {/* MEDICATION PICKER */}
+                <View style={styles.pickerContainer}>
+
+                  <Picker
+                    selectedValue={medication}
+                    style={styles.picker}
+                    onValueChange={(itemValue) =>
+                      setMedication(itemValue)
+                    }
+                  >
+
+                    <Picker.Item
+                      label="Select Medication"
+                      value=""
+                    />
+
+                    {
+                      medicationOptions.map((item, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={item}
+                          value={item}
+                        />
+                      ))
+                    }
+
+                  </Picker>
+
+                </View>
+
+                {
+                  medication === 'Others' && (
+                    <TextInput
+                      placeholder="Specify Medication"
+                      placeholderTextColor="#666"
+                      style={styles.input}
+                      value={otherMedication}
+                      onChangeText={setOtherMedication}
+                    />
+                  )
+                }
+
+                {/* MEDICAL CONDITION PICKER */}
+                <View style={styles.pickerContainer}>
+
+                  <Picker
+                    selectedValue={seniorCondition}
+                    style={styles.picker}
+                    onValueChange={(itemValue) =>
+                      setSeniorCondition(itemValue)
+                    }
+                  >
+
+                    <Picker.Item
+                      label="Select Medical Condition"
+                      value=""
+                    />
+
+                    {
+                      medicalConditions.map((item, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={item}
+                          value={item}
+                        />
+                      ))
+                    }
+
+                  </Picker>
+
+                </View>
+
+                {
+                  seniorCondition === 'Others' && (
+                    <TextInput
+                      placeholder="Specify Medical Condition"
+                      placeholderTextColor="#666"
+                      style={styles.input}
+                      value={otherSeniorCondition}
+                      onChangeText={setOtherSeniorCondition}
+                    />
+                  )
+                }
+
+              </>
+            )
+          }
+
+          {/* CAREGIVER FIELDS */}
+          {
+            role === 'Caregiver' && (
+              <>
+
+                {/* EXPERIENCE PICKER */}
+                <View style={styles.pickerContainer}>
+
+                  <Picker
+                    selectedValue={caregiverExperience}
+                    style={styles.picker}
+                    onValueChange={(itemValue) =>
+                      setCaregiverExperience(itemValue)
+                    }
+                  >
+
+                    <Picker.Item
+                      label="Years of Experience"
+                      value=""
+                    />
+
+                    {
+                      caregiverExperienceOptions.map((item, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={item}
+                          value={item}
+                        />
+                      ))
+                    }
+
+                  </Picker>
+
+                </View>
+
+                {
+                  caregiverExperience === 'Others' && (
+                    <TextInput
+                      placeholder="Specify Experience"
+                      placeholderTextColor="#666"
+                      style={styles.input}
+                      value={otherCaregiverExperience}
+                      onChangeText={setOtherCaregiverExperience}
+                    />
+                  )
+                }
+
+                {/* SPECIALIZATION PICKER */}
+                <View style={styles.pickerContainer}>
+
+                  <Picker
+                    selectedValue={caregiverSpecialization}
+                    style={styles.picker}
+                    onValueChange={(itemValue) =>
+                      setCaregiverSpecialization(itemValue)
+                    }
+                  >
+
+                    <Picker.Item
+                      label="Select Specialization"
+                      value=""
+                    />
+
+                    {
+                      caregiverSpecializations.map((item, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={item}
+                          value={item}
+                        />
+                      ))
+                    }
+
+                  </Picker>
+
+                </View>
+
+                {
+                  caregiverSpecialization === 'Others' && (
+                    <TextInput
+                      placeholder="Specify Specialization"
+                      placeholderTextColor="#666"
+                      style={styles.input}
+                      value={otherCaregiverSpecialization}
+                      onChangeText={setOtherCaregiverSpecialization}
+                    />
+                  )
+                }
+
+                {/* CAREGIVER CERTIFICATE UPLOAD */}
+                <TouchableOpacity
+                  style={styles.validIdContainer}
+                  onPress={pickCaregiverCertificate}
+                >
+
+                  {
+                    caregiverCertificateImage ? (
+
+                      <Image
+                        source={{
+                          uri: caregiverCertificateImage
+                        }}
+                        style={styles.validIdImage}
+                      />
+
+                    ) : (
+
+                      <View style={styles.validIdPlaceholder}>
+
+                        <Text style={styles.validIdText}>
+                          Upload Certificate / License
+                        </Text>
+
+                      </View>
+                    )
+                  }
+
+                </TouchableOpacity>
+
+              </>
+            )
+          }
+
+          {/* VOLUNTEER FIELDS */}
+          {
+            role === 'Volunteer' && (
+              <>
+
+                {/* HEIGHT PICKER */}
+                <View style={styles.pickerContainer}>
+
+                  <Picker
+                    selectedValue={volunteerHeight}
+                    style={styles.picker}
+                    onValueChange={(itemValue) =>
+                      setVolunteerHeight(itemValue)
+                    }
+                  >
+
+                    <Picker.Item
+                      label="Select Height (cm)"
+                      value=""
+                    />
+
+                    {
+                      volunteerHeights.map((item, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={item}
+                          value={item}
+                        />
+                      ))
+                    }
+
+                  </Picker>
+
+                </View>
+
+                {
+                  volunteerHeight === 'Others' && (
+                    <TextInput
+                      placeholder="Enter Height in cm"
+                      placeholderTextColor="#666"
+                      style={styles.input}
+                      value={otherVolunteerHeight}
+                      onChangeText={setOtherVolunteerHeight}
+                    />
+                  )
+                }
+
+                {/* WEIGHT PICKER */}
+                <View style={styles.pickerContainer}>
+
+                  <Picker
+                    selectedValue={volunteerWeight}
+                    style={styles.picker}
+                    onValueChange={(itemValue) =>
+                      setVolunteerWeight(itemValue)
+                    }
+                  >
+
+                    <Picker.Item
+                      label="Select Weight"
+                      value=""
+                    />
+
+                    {
+                      volunteerWeights.map((item, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={item}
+                          value={item}
+                        />
+                      ))
+                    }
+
+                  </Picker>
+
+                </View>
+
+                {
+                  volunteerWeight === 'Others' && (
+                    <TextInput
+                      placeholder="Enter Weight"
+                      placeholderTextColor="#666"
+                      style={styles.input}
+                      value={otherVolunteerWeight}
+                      onChangeText={setOtherVolunteerWeight}
+                    />
+                  )
+                }
+
+                {/* SKILLS PICKER */}
+                <View style={styles.pickerContainer}>
+
+                  <Picker
+                    selectedValue={volunteerSkills}
+                    style={styles.picker}
+                    onValueChange={(itemValue) =>
+                      setVolunteerSkills(itemValue)
+                    }
+                  >
+
+                    <Picker.Item
+                      label="Select Skill"
+                      value=""
+                    />
+
+                    {
+                      volunteerSkillsOptions.map((item, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={item}
+                          value={item}
+                        />
+                      ))
+                    }
+
+                  </Picker>
+
+                </View>
+
+                {
+                  volunteerSkills === 'Others' && (
+                    <TextInput
+                      placeholder="Specify Skill"
+                      placeholderTextColor="#666"
+                      style={styles.input}
+                      value={otherVolunteerSkills}
+                      onChangeText={setOtherVolunteerSkills}
+                    />
+                  )
+                }
+
+                {/* AVAILABILITY PICKER */}
+                <View style={styles.pickerContainer}>
+
+                  <Picker
+                    selectedValue={volunteerAvailability}
+                    style={styles.picker}
+                    onValueChange={(itemValue) =>
+                      setVolunteerAvailability(itemValue)
+                    }
+                  >
+
+                    <Picker.Item
+                      label="Select Availability"
+                      value=""
+                    />
+
+                    {
+                      volunteerAvailabilityOptions.map((item, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={item}
+                          value={item}
+                        />
+                      ))
+                    }
+
+                  </Picker>
+
+                </View>
+
+              </>
+            )
+          }
+
+          {/* APPROVAL NOTICE */}
+          <View style={styles.noticeBox}>
+
+            <Text style={styles.noticeTitle}>
+              Registration Approval
+            </Text>
+
+            <Text style={styles.noticeText}>
+              Your account will be reviewed by the admin.
+              Approval usually takes 1 to 2 days depending
+              on verification of your information and documents.
+            </Text>
+
+          </View>
+
+          {/* TERMS & CONDITIONS */}
+          <View style={styles.checkboxContainer}>
+
+            <Checkbox
+              value={agreeTerms}
+              onValueChange={setAgreeTerms}
+              color={agreeTerms ? '#2196F3' : undefined}
+            />
+
+            <Text style={styles.checkboxText}>
+              I agree to the Terms and Conditions of ElderCare Matter.
+            </Text>
+
+          </View>
+
+          {/* WAIVER */}
+          <View style={styles.checkboxContainer}>
+
+            <Checkbox
+              value={agreeWaiver}
+              onValueChange={setAgreeWaiver}
+              color={agreeWaiver ? '#2196F3' : undefined}
+            />
+
+            <Text style={styles.checkboxText}>
+              I confirm that all information and uploaded
+              documents are true and valid.
+            </Text>
+
+          </View>
+
           {/* REGISTER BUTTON */}
           <TouchableOpacity
             style={styles.button}
@@ -546,6 +1749,8 @@ export default function RegisterScreen({ navigation }) {
       </ScrollView>
 
     </View>
+
+  </KeyboardAvoidingView>
   );
 }
 
@@ -705,6 +1910,38 @@ const styles = StyleSheet.create({
     color: '#2196F3',
     fontWeight: 'bold',
     fontSize: 16
+  },
+
+  noticeBox: {
+    backgroundColor: '#EAF4FF',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 20
+  },
+
+  noticeTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#1E3A5F',
+    marginBottom: 5
+  },
+
+  noticeText: {
+    color: '#444',
+    lineHeight: 20
+  },
+
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 15
+  },
+
+  checkboxText: {
+    flex: 1,
+    marginLeft: 10,
+    color: '#333',
+    lineHeight: 20
   },
 
 });

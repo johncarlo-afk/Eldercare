@@ -66,7 +66,7 @@ export default function LoginScreen({ navigation }) {
 
         Alert.alert(
           "Pending Approval",
-          "Your account is waiting for admin approval."
+          res.data.message
         );
 
       }
@@ -75,7 +75,25 @@ export default function LoginScreen({ navigation }) {
 
         Alert.alert(
           "Application Rejected",
-          "Unfortunately, your account did not meet the requirements for approval. Please contact the administrator or submit a new application."
+          "Reason: " + res.data.reason
+        );
+
+      }
+
+      else if (res.data.status === 'suspended') {
+
+        Alert.alert(
+          "Account Suspended",
+          res.data.message
+        );
+
+      }
+
+      else if (res.data.status === 'deactivated') {
+
+        Alert.alert(
+          "Account Deactivated",
+          res.data.message
         );
 
       }

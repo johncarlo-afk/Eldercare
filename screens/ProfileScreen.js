@@ -1,7 +1,7 @@
-// IMPORT REACT + useState FOR MANAGING SCREEN DATA
+// IMPORT REACT
 import React, { useState } from 'react';
 
-// IMPORT REACT NATIVE COMPONENTS
+// IMPORT COMPONENTS
 import {
   View,
   Text,
@@ -10,54 +10,64 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 
-// IMPORT IMAGE PICKER
+// IMAGE PICKER
 import * as ImagePicker from 'expo-image-picker';
 
-// IMPORT AXIOS
+// AXIOS
 import axios from 'axios';
 
-// IMPORT FORM DATA
+// FORM DATA
 import FormData from 'form-data';
 
-// EXPORT PROFILE SCREEN COMPONENT
+// EXPORT SCREEN
 export default function ProfileScreen({ route }) {
 
-  // GET USER DATA
+  // USER DATA
   const { user } = route.params;
 
-  // STATES
-  const [name, setName] = useState(user.name);
+  // BASIC
+  const [name, setName] = useState(user.name || '');
+  const [role] = useState(user.role || '');
+  const [location, setLocation] = useState(user.location || '');
+  const [image, setImage] = useState(user.image || '');
+  const [bio, setBio] = useState(user.bio || '');
+  const [gender] = useState(user.gender || '');
+  const [birthDate] = useState(user.birth_date || '');
 
-  const [role, setRole] = useState(user.role);
+  // SENIOR
+  const [seniorCondition, setSeniorCondition] =
+    useState(user.senior_condition || '');
 
-  const [age, setAge] = useState(
-    user.age ? String(user.age) : ''
-  );
+  const [emergencyContact, setEmergencyContact] =
+    useState(user.emergency_contact || '');
 
-  const [location, setLocation] = useState(
-    user.location || ''
-  );
+  const [medication, setMedication] =
+    useState(user.medication || '');
 
-  const [image, setImage] = useState(
-    user.image || ''
-  );
+  // CAREGIVER
+  const [caregiverExperience, setCaregiverExperience] =
+    useState(user.caregiver_experience || '');
 
-  const [bio, setBio] = useState(
-    user.bio || ''
-  );
+  const [caregiverSpecialization, setCaregiverSpecialization] =
+    useState(user.caregiver_specialization || '');
 
-  // GENDER
-  const [gender, setGender] = useState(
-    user.gender || ''
-  );
+  // VOLUNTEER
+  const [volunteerHeight, setVolunteerHeight] =
+    useState(user.volunteer_height || '');
 
-  // BIRTH DATE
-  const [birthDate, setBirthDate] = useState(
-    user.birth_date || ''
-  );
+  const [volunteerWeight, setVolunteerWeight] =
+    useState(user.volunteer_weight || '');
+
+  const [volunteerSkills, setVolunteerSkills] =
+    useState(user.volunteer_skills || '');
+
+  const [volunteerAvailability, setVolunteerAvailability] =
+    useState(user.volunteer_availability || '');
 
   // PICK IMAGE
   const pickImage = async () => {
@@ -112,11 +122,6 @@ export default function ProfileScreen({ route }) {
 
       .then(res => {
 
-        console.log(
-          "UPLOAD RESPONSE:",
-          res.data
-        );
-
         if (res.data.image) {
 
           setImage(res.data.image);
@@ -131,10 +136,7 @@ export default function ProfileScreen({ route }) {
 
       .catch(err => {
 
-        console.log(
-          "UPLOAD ERROR:",
-          err
-        );
+        console.log(err);
 
         Alert.alert(
           "Error",
@@ -147,181 +149,329 @@ export default function ProfileScreen({ route }) {
   // UPDATE PROFILE
   const handleUpdate = () => {
 
+    console.log({
+      id: user.id,
+      name,
+      role,
+      image,
+      bio,
+      location
+    });
+
     axios.post(
       'http://192.168.0.216/eldercare-api/update_profile.php',
 
       {
         id: user.id,
+
+        // BASIC
         name,
         role,
         image,
         bio,
-        age: parseInt(age) || 0,
-        location
+        location,
+        gender,
+        birth_date: birthDate,
+
+        // SENIOR
+        senior_condition: seniorCondition || '',
+        emergency_contact: emergencyContact || '',
+        medication: medication || '',
+
+        // CAREGIVER
+        caregiver_experience:
+          caregiverExperience || '',
+
+        caregiver_specialization:
+          caregiverSpecialization || '',
+
+        // VOLUNTEER
+        volunteer_height:
+          volunteerHeight || '',
+
+        volunteer_weight:
+          volunteerWeight || '',
+
+        volunteer_skills:
+          volunteerSkills || '',
+
+        volunteer_availability:
+          volunteerAvailability || ''
+      },
+
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     )
 
-    .then(() => {
+    .then(res => {
 
-      Alert.alert(
-        "Success",
-        "Profile updated!"
+      console.log(
+        "UPDATE RESPONSE:",
+        res.data
       );
+
+      // CHECK STATUS
+      if (res.data.status === "success") {
+
+        Alert.alert(
+          "Success",
+          "Profile updated!"
+        );
+
+      } else {
+
+        Alert.alert(
+          "Error",
+          res.data.message || "Update failed"
+        );
+      }
 
     })
 
     .catch(err => {
 
-      console.log(err);
+      console.log(
+        "UPDATE ERROR:",
+        err.response?.data || err
+      );
 
+      Alert.alert(
+        "Error",
+        "Server error"
+      );
     });
   };
 
   return (
 
-    <ScrollView
-      contentContainerStyle={styles.container}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
 
-      {/* TITLE */}
-      <Text style={styles.title}>
-        My Profile
-      </Text>
-
-      {/* PROFILE IMAGE */}
-      <Image
-        source={{
-          uri:
-            image ||
-            'https://via.placeholder.com/150'
-        }}
-
-        style={styles.avatar}
-      />
-
-      {/* CHANGE PHOTO */}
-      <TouchableOpacity
-        style={styles.uploadButton}
-        onPress={pickImage}
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
 
-        <Text style={styles.uploadText}>
-          Change Profile Picture
+        {/* TITLE */}
+        <Text style={styles.title}>
+          My Profile
         </Text>
 
-      </TouchableOpacity>
+        {/* IMAGE */}
+        <Image
+          source={{
+            uri:
+              image ||
+              'https://via.placeholder.com/150'
+          }}
+          style={styles.avatar}
+        />
 
-      {/* NAME */}
-      <Text style={styles.label}>
-        Name
-      </Text>
+        {/* CHANGE PHOTO */}
+        <TouchableOpacity
+          style={styles.uploadButton}
+          onPress={pickImage}
+        >
 
-      <TextInput
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-        editable={true}
-      />
+          <Text style={styles.uploadText}>
+            Change Profile Picture
+          </Text>
 
-      {/* ROLE */}
-      <Text style={styles.label}>
-        Role
-      </Text>
+        </TouchableOpacity>
 
-      <TextInput
-        style={[
-          styles.input,
-          styles.disabledInput
-        ]}
+        {/* NAME */}
+        <Text style={styles.label}>Name</Text>
 
-        value={role}
+        <TextInput
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+        />
 
-        editable={false}
-      />
+        {/* ROLE */}
+        <Text style={styles.label}>Role</Text>
 
-      {/* GENDER */}
-      <Text style={styles.label}>
-        Gender
-      </Text>
+        <TextInput
+          style={[styles.input, styles.disabledInput]}
+          value={role}
+          editable={false}
+        />
 
-      <TextInput
-        style={[
-          styles.input,
-          styles.disabledInput
-        ]}
+        {/* GENDER */}
+        <Text style={styles.label}>Gender</Text>
 
-        value={gender}
+        <TextInput
+          style={[styles.input, styles.disabledInput]}
+          value={gender}
+          editable={false}
+        />
 
-        editable={false}
-      />
+        {/* BIRTH DATE */}
+        <Text style={styles.label}>Birth Date</Text>
 
-      {/* BIRTH DATE */}
-      <Text style={styles.label}>
-        Birth Date
-      </Text>
+        <TextInput
+          style={[styles.input, styles.disabledInput]}
+          value={birthDate}
+          editable={false}
+        />
 
-      <TextInput
-        style={[
-          styles.input,
-          styles.disabledInput
-        ]}
+        {/* LOCATION */}
+        <Text style={styles.label}>Location</Text>
 
-        value={birthDate}
+        <TextInput
+          style={styles.input}
+          value={location}
+          onChangeText={setLocation}
+        />
 
-        editable={false}
-      />
+        {/* BIO */}
+        <Text style={styles.label}>Bio</Text>
 
-      {/* AGE */}
-      <Text style={styles.label}>
-        Age
-      </Text>
+        <TextInput
+          style={styles.bioInput}
+          value={bio}
+          onChangeText={setBio}
+          multiline
+        />
 
-      <TextInput
-        style={styles.input}
-        value={age}
-        onChangeText={setAge}
-        keyboardType="numeric"
-        editable={true}
-      />
+        {/* SENIOR */}
+        {
+          role === 'Senior' && (
+            <>
 
-      {/* LOCATION */}
-      <Text style={styles.label}>
-        Location
-      </Text>
+              <Text style={styles.label}>
+                Medical Condition
+              </Text>
 
-      <TextInput
-        style={styles.input}
-        value={location}
-        onChangeText={setLocation}
-        editable={true}
-      />
+              <TextInput
+                style={styles.input}
+                value={seniorCondition}
+                onChangeText={setSeniorCondition}
+              />
 
-      {/* BIO */}
-      <Text style={styles.label}>
-        Bio
-      </Text>
+              <Text style={styles.label}>
+                Emergency Contact
+              </Text>
 
-      <TextInput
-        style={styles.bioInput}
-        value={bio}
-        onChangeText={setBio}
-        multiline
-        editable={true}
-      />
+              <TextInput
+                style={styles.input}
+                value={emergencyContact}
+                onChangeText={setEmergencyContact}
+              />
 
-      {/* UPDATE BUTTON */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleUpdate}
-      >
+              <Text style={styles.label}>
+                Medication
+              </Text>
 
-        <Text style={styles.buttonText}>
-          Update Profile
-        </Text>
+              <TextInput
+                style={styles.input}
+                value={medication}
+                onChangeText={setMedication}
+              />
 
-      </TouchableOpacity>
+            </>
+          )
+        }
 
-    </ScrollView>
+        {/* CAREGIVER */}
+        {
+          role === 'Caregiver' && (
+            <>
+
+              <Text style={styles.label}>
+                Experience
+              </Text>
+
+              <TextInput
+                style={styles.input}
+                value={caregiverExperience}
+                onChangeText={setCaregiverExperience}
+              />
+
+              <Text style={styles.label}>
+                Specialization
+              </Text>
+
+              <TextInput
+                style={styles.input}
+                value={caregiverSpecialization}
+                onChangeText={setCaregiverSpecialization}
+              />
+
+            </>
+          )
+        }
+
+        {/* VOLUNTEER */}
+        {
+          role === 'Volunteer' && (
+            <>
+
+              <Text style={styles.label}>
+                Height
+              </Text>
+
+              <TextInput
+                style={styles.input}
+                value={volunteerHeight}
+                onChangeText={setVolunteerHeight}
+              />
+
+              <Text style={styles.label}>
+                Weight
+              </Text>
+
+              <TextInput
+                style={styles.input}
+                value={volunteerWeight}
+                onChangeText={setVolunteerWeight}
+              />
+
+              <Text style={styles.label}>
+                Skills
+              </Text>
+
+              <TextInput
+                style={styles.input}
+                value={volunteerSkills}
+                onChangeText={setVolunteerSkills}
+              />
+
+              <Text style={styles.label}>
+                Availability
+              </Text>
+
+              <TextInput
+                style={styles.input}
+                value={volunteerAvailability}
+                onChangeText={setVolunteerAvailability}
+              />
+
+            </>
+          )
+        }
+
+        {/* BUTTON */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleUpdate}
+        >
+
+          <Text style={styles.buttonText}>
+            Update Profile
+          </Text>
+
+        </TouchableOpacity>
+
+      </ScrollView>
+
+    </KeyboardAvoidingView>
   );
 }
 

@@ -16,7 +16,7 @@ import {
 import axios from 'axios';
 
 // MAIN SCREEN
-export default function ScheduleListScreen({ route }) {
+export default function ScheduleListScreen({ route, navigation }) {
 
   // GET LOGGED-IN USER
   const { user } = route.params;
@@ -195,55 +195,152 @@ export default function ScheduleListScreen({ route }) {
                 Status: {item.status}
               </Text>
 
-              {/* SHOW BUTTONS ONLY IF PENDING */}
-              {
-                item.status === 'pending' &&
-                item.created_by &&
-                Number(item.created_by) !== Number(user.id) && (
+              {/* ACTION BUTTONS */}
+              <View>
 
-                <View>
+                {/* ACCEPT / REJECT */}
+                {
+                  item.status === 'Pending' &&
+                  item.created_by &&
+                  Number(item.created_by) !== Number(user.id) && (
 
-                  {/* ACCEPT BUTTON */}
-                  <TouchableOpacity
+                    <>
 
-                    style={styles.acceptButton}
+                      <TouchableOpacity
+                        style={styles.acceptButton}
+                        onPress={() =>
+                          updateScheduleStatus(
+                            item.id,
+                            'Approved'
+                          )
+                        }
+                      >
 
-                    onPress={() =>
-                      updateScheduleStatus(
-                        item.id,
-                        'Approved'
-                      )
-                    }
-                  >
+                        <Text style={styles.buttonText}>
+                          Accept
+                        </Text>
 
-                    <Text style={styles.buttonText}>
-                      Accept
-                    </Text>
+                      </TouchableOpacity>
 
-                  </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.rejectButton}
+                        onPress={() =>
+                          updateScheduleStatus(
+                            item.id,
+                            'Cancelled'
+                          )
+                        }
+                      >
 
-                  {/* REJECT BUTTON */}
-                  <TouchableOpacity
+                        <Text style={styles.buttonText}>
+                          Reject
+                        </Text>
 
-                    style={styles.rejectButton}
+                      </TouchableOpacity>
 
-                    onPress={() =>
-                      updateScheduleStatus(
-                        item.id,
-                        'Cancelled'
-                      )
-                    }
-                  >
+                    </>
+                  )
+                }
 
-                    <Text style={styles.buttonText}>
-                      Reject
-                    </Text>
+                {/* COMPLETE BUTTON */}
+                {
+                  item.status === 'Approved' && (
 
-                  </TouchableOpacity>
+                    <TouchableOpacity
 
-                </View>
+                      style={styles.completeButton}
 
-              )}
+                      onPress={() =>
+                        updateScheduleStatus(
+                          item.id,
+                          'Completed'
+                        )
+                      }
+                    >
+
+                      <Text style={styles.buttonText}>
+                        Complete Schedule
+                      </Text>
+
+                    </TouchableOpacity>
+
+                  )
+                }
+
+                <TouchableOpacity
+
+                  style={styles.chatButton}
+
+                  onPress={() =>
+
+                    navigation.navigate(
+
+                      'Chat',
+
+                      {
+
+                        currentUser: {
+                          id: user.id
+                        },
+
+                        otherUser: {
+
+                          id:
+
+                            item.partner_id == user.id
+
+                              ? item.senior_id
+
+                              : item.partner_id
+
+                        }
+
+                      }
+
+                    )
+
+                  }
+                >
+
+                  <Text style={styles.buttonText}>
+                    Message
+                  </Text>
+
+                </TouchableOpacity>
+
+                {/* RATE BUTTON */}
+                {
+                  item.status === 'Completed' && (
+
+                    <TouchableOpacity
+
+                      style={styles.rateButton}
+
+                      onPress={() =>
+
+                        navigation.navigate(
+
+                          'RatingScreen',
+
+                          {
+                            schedule: item,
+                            user: user
+                          }
+
+                        )
+                      }
+                    >
+
+                      <Text style={styles.buttonText}>
+                        Rate User
+                      </Text>
+
+                    </TouchableOpacity>
+
+                  )
+                }
+
+              </View>
 
               {/* NOTES */}
               {item.notes ? (
@@ -353,6 +450,27 @@ const styles = StyleSheet.create({
   notes: {
     marginTop: 10,
     color: '#555'
-  }
+  },
+
+  completeButton: {
+    backgroundColor: '#2196F3',
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 10
+  },
+
+  rateButton: {
+    backgroundColor: '#FF9800',
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 10
+  },
+
+  chatButton: {
+  backgroundColor: '#9C27B0',
+  padding: 12,
+  borderRadius: 10,
+  marginTop: 10
+},
 
 });

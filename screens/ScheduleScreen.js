@@ -12,7 +12,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 
 // IMPORT AXIOS
@@ -132,212 +134,143 @@ export default function ScheduleScreen({
   };
 
   return (
-
-    <ScrollView
-      contentContainerStyle={styles.container}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-
-      {/* TITLE */}
-      <Text style={styles.title}>
-        Create Schedule
-      </Text>
-
-      {/* SUBTITLE */}
-      <Text style={styles.subtitle}>
-        Meeting with {matchedUser.name}
-      </Text>
-
-      {/* DATE PICKER */}
-      <TouchableOpacity
-        style={styles.input}
-        onPress={() =>
-          setShowDatePicker(true)
-        }
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
 
-        <Text
-          style={{
-            color:
-              meetingDate
-                ? '#000'
-                : '#666',
-            fontSize: 16
-          }}
-        >
-
-          {
-            meetingDate
-              ? meetingDate
-              : 'Select Meeting Date'
-          }
-
+        {/* TITLE */}
+        <Text style={styles.title}>
+          Create Schedule
         </Text>
 
-      </TouchableOpacity>
+        {/* SUBTITLE */}
+        <Text style={styles.subtitle}>
+          Meeting with {matchedUser.name}
+        </Text>
 
-      {
-        showDatePicker && (
+        {/* DATE PICKER */}
+        <TouchableOpacity
+          style={styles.input}
+          onPress={() => setShowDatePicker(true)}
+        >
+          <Text
+            style={{
+              color: meetingDate ? '#000' : '#666',
+              fontSize: 16
+            }}
+          >
+            {meetingDate ? meetingDate : 'Select Meeting Date'}
+          </Text>
+        </TouchableOpacity>
 
+        {showDatePicker && (
           <DateTimePicker
             value={date}
             mode="date"
             display="default"
-
-            onChange={(
-              event,
-              selectedDate
-            ) => {
-
+            onChange={(event, selectedDate) => {
               setShowDatePicker(false);
-
               if (selectedDate) {
-
                 setDate(selectedDate);
 
-                // FORMAT DATE
                 const formattedDate =
-                  selectedDate
-                    .toISOString()
-                    .split('T')[0];
+                  selectedDate.toISOString().split('T')[0];
 
-                setMeetingDate(
-                  formattedDate
-                );
+                setMeetingDate(formattedDate);
               }
             }}
           />
+        )}
 
-        )
-      }
-
-      {/* TIME PICKER */}
-      <TouchableOpacity
-        style={styles.input}
-        onPress={() =>
-          setShowTimePicker(true)
-        }
-      >
-
-        <Text
-          style={{
-            color:
-              meetingTime
-                ? '#000'
-                : '#666',
-            fontSize: 16
-          }}
+        {/* TIME PICKER */}
+        <TouchableOpacity
+          style={styles.input}
+          onPress={() => setShowTimePicker(true)}
         >
+          <Text
+            style={{
+              color: meetingTime ? '#000' : '#666',
+              fontSize: 16
+            }}
+          >
+            {meetingTime ? meetingTime : 'Select Meeting Time'}
+          </Text>
+        </TouchableOpacity>
 
-          {
-            meetingTime
-              ? meetingTime
-              : 'Select Meeting Time'
-          }
-
-        </Text>
-
-      </TouchableOpacity>
-
-      {
-        showTimePicker && (
-
+        {showTimePicker && (
           <DateTimePicker
             value={time}
             mode="time"
             display="default"
-
-            onChange={(
-              event,
-              selectedTime
-            ) => {
-
+            onChange={(event, selectedTime) => {
               setShowTimePicker(false);
 
               if (selectedTime) {
-
                 setTime(selectedTime);
 
-                // FORMAT TIME
-                let hours =
-                  selectedTime.getHours();
+                let hours = selectedTime.getHours();
+                let minutes = selectedTime.getMinutes();
+                let ampm = hours >= 12 ? 'PM' : 'AM';
 
-                let minutes =
-                  selectedTime
-                    .getMinutes();
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
 
-                let ampm =
-                  hours >= 12
-                    ? 'PM'
-                    : 'AM';
+                const formattedTime = `${hours}:${minutes} ${ampm}`;
 
-                hours =
-                  hours % 12;
-
-                hours =
-                  hours
-                    ? hours
-                    : 12;
-
-                minutes =
-                  minutes < 10
-                    ? '0' + minutes
-                    : minutes;
-
-                const formattedTime =
-                  `${hours}:${minutes} ${ampm}`;
-
-                setMeetingTime(
-                  formattedTime
-                );
+                setMeetingTime(formattedTime);
               }
             }}
           />
+        )}
 
-        )
-      }
+        {/* LOCATION */}
+        <TextInput
+          placeholder="Meeting Location"
+          placeholderTextColor="#666"
+          style={styles.input}
+          value={meetingLocation}
+          onChangeText={setMeetingLocation}
+        />
 
-      {/* LOCATION */}
-      <TextInput
-        placeholder="Meeting Location"
-        placeholderTextColor="#666"
-        style={styles.input}
-        value={meetingLocation}
-        onChangeText={setMeetingLocation}
-      />
+        {/* EMERGENCY CONTACT */}
+        <TextInput
+          placeholder="Emergency Contact Number"
+          placeholderTextColor="#666"
+          style={styles.input}
+          value={emergencyContact}
+          onChangeText={setEmergencyContact}
+          keyboardType="phone-pad"
+        />
 
-      {/* EMERGENCY CONTACT */}
-      <TextInput
-        placeholder="Emergency Contact Number"
-        placeholderTextColor="#666"
-        style={styles.input}
-        value={emergencyContact}
-        onChangeText={setEmergencyContact}
-        keyboardType="phone-pad"
-      />
+        {/* NOTES */}
+        <TextInput
+          placeholder="Notes"
+          placeholderTextColor="#666"
+          multiline
+          style={styles.notesInput}
+          value={notes}
+          onChangeText={setNotes}
+        />
 
-      {/* NOTES */}
-      <TextInput
-        placeholder="Notes"
-        placeholderTextColor="#666"
-        multiline
-        style={styles.notesInput}
-        value={notes}
-        onChangeText={setNotes}
-      />
+        {/* BUTTON */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleCreateSchedule}
+        >
+          <Text style={styles.buttonText}>
+            Save Schedule
+          </Text>
+        </TouchableOpacity>
 
-      {/* BUTTON */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleCreateSchedule}
-      >
-
-        <Text style={styles.buttonText}>
-          Save Schedule
-        </Text>
-
-      </TouchableOpacity>
-
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
